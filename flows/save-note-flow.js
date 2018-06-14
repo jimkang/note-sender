@@ -1,13 +1,12 @@
 var request = require('basic-browser-request');
 var handleError = require('handle-error-web');
 var sb = require('standard-bail')();
-var config = require('../config');
 var renderMessage = require('../dom/render-message');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 var lineBreakRegex = /\n/g;
 
-function saveNoteFlow({ note, archive }) {
+function saveNoteFlow({ note, archive, password }) {
   note.caption = note.caption.replace(lineBreakRegex, '<br>');
   var reqOpts = {
     method: 'POST',
@@ -15,7 +14,7 @@ function saveNoteFlow({ note, archive }) {
     json: true,
     body: note,
     headers: {
-      Authorization: `Key ${config.secret}`,
+      Authorization: `Key ${password}`,
       'X-Note-Archive': archive,
       'Content-Type': 'application/json'
     }

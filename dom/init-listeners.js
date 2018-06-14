@@ -15,7 +15,8 @@ function initListeners({ saveNoteFlow }) {
   function onSaveNote() {
     saveNoteFlow({
       note: objectFromDOM(window.document.getElementById('note-form')),
-      archive: document.getElementById('archive').value
+      archive: document.getElementById('archive').value,
+      password: document.getElementById('password').value
     });
   }
 }
