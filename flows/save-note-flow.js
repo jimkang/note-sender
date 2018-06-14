@@ -28,7 +28,9 @@ function saveNoteFlow({ note, archive, password }) {
         messageType: 'save-message'
       });
     } else {
-      handleError(new Error(`Could not save note. ${res.statusCode}: ${body.message}`));
+      handleError(
+        new Error(`Could not save note. ${res.statusCode}: ${body.message}`)
+      );
     }
   }
 }
