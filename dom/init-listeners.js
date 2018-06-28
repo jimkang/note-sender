@@ -13,11 +13,15 @@ function initListeners({ saveNoteFlow }) {
   d3.select('#submit-note-button').on('click', onSaveNote);
 
   function onSaveNote() {
-    saveNoteFlow({
-      note: objectFromDOM(window.document.getElementById('note-form')),
-      archive: document.getElementById('archive').value,
-      password: document.getElementById('password').value
-    });
+    var note = objectFromDOM(window.document.getElementById('note-form'));
+    var archive = document.getElementById('archive').value;
+    var password = document.getElementById('password').value;
+    var files = document.getElementById('media-file').files;
+    var file;
+    if (files.length > 0) {
+      file = files[0];
+    }
+    saveNoteFlow({ note, archive, password, file });
   }
 }
 

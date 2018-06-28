@@ -4,21 +4,35 @@ var sb = require('standard-bail')();
 var renderMessage = require('../dom/render-message');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
+// const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
-function saveNoteFlow({ note, archive, password }) {
+function saveNoteFlow({ note, archive, password, file }) {
   note.caption = note.caption.replace(lineBreakRegex, '<br>');
+
   var reqOpts = {
     method: 'POST',
     url: apiServerBaseURL,
     json: true,
-    body: note,
     headers: {
       Authorization: `Key ${password}`,
-      'X-Note-Archive': archive,
-      'Content-Type': 'application/json'
+      'X-Note-Archive': archive
     }
   };
+
+  if (file) {
+    let formData = new FormData();
+    for (let key in note) {
+      formData.append(key, note[key]);
+    }
+    formData.append('mediaFilename', file.name);
+    formData.append('altText', note.caption.slice(0, 100));
+    formData.append('buffer', file);
+    reqOpts.formData = formData;
+  } else {
+    reqOpts.headers['Content-Type'] = 'application/json';
+    reqOpts.body = note;
+  }
   request(reqOpts, sb(onSaved, handleError));
 
   function onSaved(res, body) {
