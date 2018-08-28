@@ -28,6 +28,9 @@ function saveNoteFlow({ note, archive, password, file }) {
     }
     formData.append('mediaFilename', file.name);
     formData.append('altText', note.caption.slice(0, 100));
+    if (file.type.startsWith('video/')) {
+      formData.append('isVideo', true);
+    }
     formData.append('buffer', file);
     reqOpts.formData = formData;
   } else {
