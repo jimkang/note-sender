@@ -2,6 +2,7 @@ var request = require('basic-browser-request');
 var handleError = require('handle-error-web');
 var sb = require('standard-bail')();
 var renderMessage = require('../dom/render-message');
+var resetFields = require('../dom/reset-fields');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
@@ -41,6 +42,7 @@ function saveNoteFlow({ note, archive, password, file }) {
         message: `Saved note: "${note.caption}".`,
         messageType: 'save-message'
       });
+      resetFields();
     } else {
       handleError(
         new Error(`Could not save note. ${res.statusCode}: ${body.message}`)
