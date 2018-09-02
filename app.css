@@ -65,6 +65,12 @@ body {
   margin-bottom: 0.5em;
 }
 
+#note-form h5 {
+  font-weight: 200;
+  margin-bottom: 0.5em;
+}
+
+
 #note-form textarea {
   font-family: Georgia, serif;
   background-color: white;

@@ -17,11 +17,13 @@ function initListeners({ saveNoteFlow }) {
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
     var files = document.getElementById('media-file').files;
+    var maxSideLength = document.getElementById('max-image-side-length').value;
+
     var file;
     if (files.length > 0) {
       file = files[0];
     }
-    saveNoteFlow({ note, archive, password, file });
+    saveNoteFlow({ note, archive, password, file, maxSideLength });
   }
 }
 
