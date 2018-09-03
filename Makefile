@@ -17,7 +17,7 @@ run-on-80:
 	sudo wzrd app.js:index.js --port 80 -- -d
 
 build:
-	$(BROWSERIFY) app.js | $(UGLIFY) -c -m -o index.js
+	$(BROWSERIFY) app.js > index.js
 
 prettier:
 	prettier --single-quote --write "**/*.js"
