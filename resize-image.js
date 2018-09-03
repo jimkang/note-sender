@@ -1,21 +1,33 @@
-var Jimp = require('jimp/browser/lib/jimp.min');
-var callNextTick = require('call-next-tick');
-var waterfall = require('async-waterfall');
+function resizeImage(mimeType, maxSideLength, file, resizeDone) {
+  var img = new Image();
+  img.addEventListener('load', drawToCanvas);
+  img.src = URL.createObjectURL(file);
 
-function resizeImage(mimeType, maxSideLength, buffer, resizeDone) {
-  waterfall([wrapImage, doResize, passBuffer], resizeDone);
+  function drawToCanvas() {
+    var originalWidth = img.width;
+    var originalHeight = img.height;
 
-  function wrapImage(done) {
-    Jimp.read(buffer, done);
+    var newWidth;
+    var newHeight;
+    if (originalWidth > originalHeight) {
+      newWidth = maxSideLength;
+      newHeight = (originalHeight * newWidth) / originalWidth;
+    } else {
+      newHeight = maxSideLength;
+      newWidth = (originalWidth * newHeight) / originalHeight;
+    }
+
+    var canvas = document.getElementById('resize-canvas');
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+    // TODO: Clear canvas?
+    canvas.toBlob(passBlob, mimeType, 0.7);
   }
 
-  function doResize(image, done) {
-    image.contain(+maxSideLength, +maxSideLength, Jimp.RESIZE_BILINEAR);
-    callNextTick(done, null, image);
-  }
-
-  function passBuffer(image, done) {
-    image.getBuffer(mimeType, done);
+  function passBlob(blob) {
+    resizeDone(null, blob);
   }
 }
 
