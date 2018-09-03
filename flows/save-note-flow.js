@@ -6,6 +6,7 @@ var resetFields = require('../dom/reset-fields');
 var resizeImage = require('../resize-image');
 var waterfall = require('async-waterfall');
 var curry = require('lodash.curry');
+var callNextTick = require('call-next-tick');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
@@ -48,7 +49,9 @@ function saveNoteFlow({ note, archive, password, file, maxSideLength }) {
         [
           curry(getBufferFromFile)(file),
           curry(resizeImage)(file.type, maxSideLength),
-          appendAndSend
+          curry(getFileBlobFromBuffer)(file.name, file.type),
+          appendAndSend,
+          onSaved
         ],
         handleError
       );
@@ -56,8 +59,8 @@ function saveNoteFlow({ note, archive, password, file, maxSideLength }) {
       appendAndSend(file, sb(onSaved, handleError));
     }
 
-    function appendAndSend(buffer, done) {
-      formData.append('buffer', buffer);
+    function appendAndSend(fileBlob, done) {
+      formData.append('buffer', fileBlob);
       reqOpts.formData = formData;
       request(reqOpts, done);
     }
@@ -87,6 +90,10 @@ function getBufferFromFile(file, done) {
   function passBuffer(e) {
     done(null, e.target.result);
   }
+}
+
+function getFileBlobFromBuffer(name, type, buffer, done) {
+  callNextTick(done, null, new File(buffer, name, { type }));
 }
 
 module.exports = saveNoteFlow;
