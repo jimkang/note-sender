@@ -4,6 +4,8 @@ var of = require('object-form');
 var listenersInit = false;
 var objectFromDOM = of.ObjectFromDOM({});
 
+var noteArea = document.getElementById('note-area');
+
 function initListeners({ saveNoteFlow }) {
   if (listenersInit) {
     return;
@@ -11,9 +13,17 @@ function initListeners({ saveNoteFlow }) {
   listenersInit = true;
 
   d3.select('#submit-note-button').on('click', onSaveNote);
+  d3.select('#insert-link-button').on(
+    'click',
+    InsertIntoTextarea('<a href="URL">TEXT</a>')
+  );
+  d3.select('#insert-bq-button').on(
+    'click',
+    InsertIntoTextarea('<blockquote>QUOTE</blockquote>')
+  );
 
   function onSaveNote() {
-    var note = objectFromDOM(window.document.getElementById('note-form'));
+    var note = objectFromDOM(document.getElementById('note-form'));
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
     var files = document.getElementById('media-file').files;
@@ -25,6 +35,12 @@ function initListeners({ saveNoteFlow }) {
     }
     saveNoteFlow({ note, archive, password, file, maxSideLength });
   }
+}
+
+function InsertIntoTextarea(text) {
+  return function insertIntoTextarea() {
+    noteArea.value = noteArea.value + text;
+  };
 }
 
 module.exports = initListeners;
