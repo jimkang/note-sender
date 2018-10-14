@@ -18,7 +18,11 @@ if (!HTMLCanvasElement.prototype.toBlob) {
   });
 }
 
-function resizeImage(mimeType, maxSideLength, file, resizeDone) {
+var canvas = document.getElementById('resize-canvas');
+var loadedImageMIMEType;
+var imageIsLoaded = true;
+
+function loadFileToCanvas({ mimeType, maxSideLength, file }) {
   var img = new Image();
   img.addEventListener('load', drawToCanvas);
   img.src = URL.createObjectURL(file);
@@ -37,18 +41,29 @@ function resizeImage(mimeType, maxSideLength, file, resizeDone) {
       newWidth = (originalWidth * newHeight) / originalHeight;
     }
 
-    var canvas = document.getElementById('resize-canvas');
     canvas.width = newWidth;
     canvas.height = newHeight;
     var ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, newWidth, newHeight);
-    // TODO: Clear canvas?
-    canvas.toBlob(passBlob, mimeType, 0.7);
-  }
 
-  function passBlob(blob) {
-    resizeDone(null, blob);
+    loadedImageMIMEType = mimeType;
   }
 }
 
-module.exports = resizeImage;
+function getImageFromCanvas(done) {
+  canvas.toBlob(passBlob, loadedImageMIMEType, 0.7);
+
+  function passBlob(blob) {
+    done(null, blob);
+  }
+}
+
+function canvasHasImage() {
+  return imageIsLoaded;
+}
+
+module.exports = {
+  loadFileToCanvas,
+  getImageFromCanvas,
+  canvasHasImage
+};

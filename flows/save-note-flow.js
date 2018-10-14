@@ -3,15 +3,14 @@ var handleError = require('handle-error-web');
 var sb = require('standard-bail')();
 var renderMessage = require('../dom/render-message');
 var resetFields = require('../dom/reset-fields');
-var resizeImage = require('../resize-image');
 var waterfall = require('async-waterfall');
-var curry = require('lodash.curry');
+var canvasImageOps = require('../dom/canvas-image-ops');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
-function saveNoteFlow({ note, archive, password, file, maxSideLength }) {
+function saveNoteFlow({ note, archive, password, file }) {
   note.caption = note.caption.replace(lineBreakRegex, '<br>');
 
   var reqOpts = {
@@ -43,10 +42,10 @@ function saveNoteFlow({ note, archive, password, file, maxSideLength }) {
       formData.append('isVideo', true);
     }
 
-    if (file.type.startsWith('image/') && !isNaN(maxSideLength)) {
+    if (file.type.startsWith('image/') && canvasImageOps.canvasHasImage()) {
       waterfall(
         [
-          curry(resizeImage)(file.type, +maxSideLength, file),
+          canvasImageOps.getImageFromCanvas,
           // writeToDebugImage,
           appendAndSend,
           onSaved
