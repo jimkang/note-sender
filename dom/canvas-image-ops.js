@@ -19,11 +19,15 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 }
 
 var canvas = document.getElementById('resize-canvas');
+var ctx = canvas.getContext('2d');
+var img;
+var currentRotation = 0;
+
 var loadedImageMIMEType;
 var imageIsLoaded = true;
 
 function loadFileToCanvas({ mimeType, maxSideLength, file }) {
-  var img = new Image();
+  img = new Image();
   img.addEventListener('load', drawToCanvas);
   img.src = URL.createObjectURL(file);
 
@@ -43,7 +47,6 @@ function loadFileToCanvas({ mimeType, maxSideLength, file }) {
 
     canvas.width = newWidth;
     canvas.height = newHeight;
-    var ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
     loadedImageMIMEType = mimeType;
@@ -62,8 +65,30 @@ function canvasHasImage() {
   return imageIsLoaded;
 }
 
+function rotateImage() {
+  if (!canvasHasImage()) {
+    return;
+  }
+  ctx.save();
+  currentRotation += 90;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  var prevWidth = canvas.width;
+  canvas.width = canvas.height;
+  canvas.height = prevWidth;
+  console.log(canvas.width, canvas.height)
+
+  ctx.translate(canvas.width/2, canvas.height/2);
+  ctx.rotate(currentRotation * Math.PI/180);
+  ctx.drawImage(img, -canvas.height/2, -canvas.width/2, canvas.width, canvas.height);
+  //ctx.setTransform(1, 0, 0, 1, 0, 0); 
+  ctx.restore();
+  return
+}
+
 module.exports = {
   loadFileToCanvas,
   getImageFromCanvas,
-  canvasHasImage
+  canvasHasImage,
+  rotateImage
 };

@@ -1,6 +1,6 @@
 var d3 = require('d3-selection');
 var of = require('object-form');
-var loadFileToCanvas = require('./canvas-image-ops').loadFileToCanvas;
+var canvasImageOps = require('./canvas-image-ops');
 
 var listenersInit = false;
 var objectFromDOM = of.ObjectFromDOM({});
@@ -24,6 +24,7 @@ function wireControls({ saveNoteFlow }) {
     InsertIntoTextarea('<blockquote></blockquote>')
   );
   d3.select('#media-file').on('change', onMediaFileChange);
+  d3.select('#rotate-button').on('click', canvasImageOps.rotateImage);
 
   function onSaveNote() {
     var note = objectFromDOM(document.getElementById('note-form'));
@@ -42,7 +43,7 @@ function wireControls({ saveNoteFlow }) {
     var file = this.files[0];
     var maxSideLength = +maxSideLengthField.value;
     if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
-      loadFileToCanvas({ file, mimeType: file.type, maxSideLength });
+      canvasImageOps.loadFileToCanvas({ file, mimeType: file.type, maxSideLength });
     }
   }
 }
