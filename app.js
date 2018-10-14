@@ -1,6 +1,6 @@
 var RouteState = require('route-state');
 var handleError = require('handle-error-web');
-var initListeners = require('./dom/init-listeners');
+var wireControls = require('./dom/wire-controls');
 var saveNoteFlow = require('./flows/save-note-flow');
 
 var routeState = RouteState({
@@ -18,5 +18,5 @@ function reportTopLevelError(msg, url, lineNo, columnNo, error) {
 }
 
 function followRoute() {
-  initListeners({ addToRoute: routeState.addToRoute, saveNoteFlow });
+  wireControls({ addToRoute: routeState.addToRoute, saveNoteFlow });
 }

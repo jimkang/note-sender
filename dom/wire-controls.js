@@ -6,7 +6,7 @@ var objectFromDOM = of.ObjectFromDOM({});
 
 var noteArea = document.getElementById('note-area');
 
-function initListeners({ saveNoteFlow }) {
+function wireControls({ saveNoteFlow }) {
   if (listenersInit) {
     return;
   }
@@ -43,4 +43,4 @@ function InsertIntoTextarea(text) {
   };
 }
 
-module.exports = initListeners;
+module.exports = wireControls;
