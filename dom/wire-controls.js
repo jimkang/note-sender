@@ -15,11 +15,11 @@ function wireControls({ saveNoteFlow }) {
   d3.select('#submit-note-button').on('click', onSaveNote);
   d3.select('#insert-link-button').on(
     'click',
-    InsertIntoTextarea('<a href="URL">TEXT</a>')
+    InsertIntoTextarea('<a href="URL"></a>')
   );
   d3.select('#insert-bq-button').on(
     'click',
-    InsertIntoTextarea('<blockquote>QUOTE</blockquote>')
+    InsertIntoTextarea('<blockquote></blockquote>')
   );
 
   function onSaveNote() {
