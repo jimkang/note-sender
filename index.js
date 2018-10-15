@@ -266,7 +266,7 @@ function saveNoteFlow({ note, archive, password, file }) {
       formData.append('isVideo', true);
     }
 
-    if (file.type.startsWith('image/') && canvasImageOps.canvasHasImage()) {
+    if (canvasImageOps.canvasHasImage()) {
       waterfall(
         [
           canvasImageOps.getImageFromCanvas,
