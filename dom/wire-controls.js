@@ -46,7 +46,11 @@ function wireControls({ saveNoteFlow }) {
   function loadFile(file) {
     var maxSideLength = +maxSideLengthField.value;
     if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
-      canvasImageOps.loadFileToCanvas({ file, mimeType: file.type, maxSideLength });
+      canvasImageOps.loadFileToCanvas({
+        file,
+        mimeType: file.type,
+        maxSideLength
+      });
     }
   }
 }

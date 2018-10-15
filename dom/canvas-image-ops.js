@@ -21,7 +21,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 var canvas = document.getElementById('resize-canvas');
 var ctx = canvas.getContext('2d');
 var img;
-var currentRotation = 0;
+var rotations = 0;
 
 var loadedImageMIMEType;
 var imageIsLoaded = true;
@@ -32,6 +32,7 @@ function loadFileToCanvas({ mimeType, maxSideLength, file }) {
   img.src = URL.createObjectURL(file);
 
   function drawToCanvas() {
+    rotations = 0;
     var originalWidth = img.width;
     var originalHeight = img.height;
 
@@ -69,21 +70,26 @@ function rotateImage() {
   if (!canvasHasImage()) {
     return;
   }
-  ctx.save();
-  currentRotation += 90;
+  rotations += 1;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  var prevWidth = canvas.width;
-  canvas.width = canvas.height;
-  canvas.height = prevWidth;
-  console.log(canvas.width, canvas.height)
+  var oldWidth = canvas.width;
+  var oldHeight = canvas.height;
+  canvas.width = oldHeight;
+  canvas.height = oldWidth;
+  console.log(canvas.width, canvas.height);
+  var angle = (rotations * Math.PI) / 2;
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate(angle);
 
-  ctx.translate(canvas.width/2, canvas.height/2);
-  ctx.rotate(currentRotation * Math.PI/180);
-  ctx.drawImage(img, -canvas.height/2, -canvas.width/2, canvas.width, canvas.height);
-  //ctx.setTransform(1, 0, 0, 1, 0, 0); 
-  ctx.restore();
-  return
+  // Sadly, I'm not entirely sure why this works.
+  if (rotations % 2 === 1) {
+    ctx.translate(-oldWidth / 2, -oldHeight / 2);
+    ctx.drawImage(img, 0, 0, canvas.height, canvas.width);
+  } else {
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  }
 }
 
 module.exports = {
