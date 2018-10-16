@@ -51,6 +51,7 @@ function loadFileToCanvas({ mimeType, maxSideLength, file }) {
     ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
     loadedImageMIMEType = mimeType;
+    imageIsLoaded = true;
   }
 }
 
