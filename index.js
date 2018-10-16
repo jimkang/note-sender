@@ -255,6 +255,7 @@ function saveNoteFlow({ note, archive, password, file }) {
     request(reqOpts, sb(onSaved, handleError));
   }
 
+  // This function assumes we have a file.
   function postFormData(reqOpts) {
     let formData = new FormData();
     for (let key in note) {
@@ -264,9 +265,8 @@ function saveNoteFlow({ note, archive, password, file }) {
     formData.append('altText', note.caption.slice(0, 100));
     if (file.type.startsWith('video/')) {
       formData.append('isVideo', true);
-    }
-
-    if (canvasImageOps.canvasHasImage()) {
+      appendAndSend(file, sb(onSaved, handleError));
+    } else if (canvasImageOps.canvasHasImage()) {
       waterfall(
         [
           canvasImageOps.getImageFromCanvas,
@@ -277,7 +277,9 @@ function saveNoteFlow({ note, archive, password, file }) {
         handleError
       );
     } else {
-      appendAndSend(file, sb(onSaved, handleError));
+      throw new Error(
+        'Unknown file: No image is loaded to canvas, nor is the file a video.'
+      );
     }
 
     function appendAndSend(fileBlob, done) {
