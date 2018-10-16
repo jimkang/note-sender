@@ -49,7 +49,7 @@ var img;
 var rotations = 0;
 
 var loadedImageMIMEType;
-var imageIsLoaded = true;
+var imageIsLoaded = false;
 
 function loadFileToCanvas({ mimeType, maxSideLength, file }) {
   img = new Image();
