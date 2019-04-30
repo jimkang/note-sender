@@ -26,7 +26,8 @@
   <input type="file" id="media-file" accept="image/*, video/*">
   <button id="rotate-button">Rotate image</button>
   <h5>Resize to this maximum length for image side</h5> (Set it to "unlimited" to not resize at all)
-  <input type="text" id="max-image-side-length" value="2048"></input>
+  <input type="text" id="max-image-side-length" value="2016"></input>
+  <canvas id="thumbnail-canvas" class="hidden"></canvas>
 </section>
 
 <button id="submit-note-button">Note!</button>
@@ -34,7 +35,7 @@
 <div id="save-message" class="hidden"></div>
 </section>
 
-<canvas id="resize-canvas"></canvas>
+<canvas id="resize-canvas" class="hidden"></canvas>
 
 <script src="index.js"></script>
 

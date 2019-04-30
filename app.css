@@ -16,7 +16,6 @@ body {
 
 #status-message {
   background-color: #ffffee;
-  box-shadow: #666 inset 0 0 6px;
   margin: 1em;
   padding: 1em;
 }
@@ -33,15 +32,19 @@ body {
   font-size: 30px;
   padding: 0.5em;
   border-style: solid;
-  box-shadow: #aaa inset 0 0 6px;
   border-color: #bbb;
   border-width: 1px;
 }
 
+input#media-file {
+  padding-left: 0;
+  border-width: 0;
+}
+
+
 #note-form section {
   margin-bottom: 1em;
   background-color: hsla(0, 0%, 0%, 0.02);
-  box-shadow: #666 inset 0 0 4px;
   padding: 1em;
   display: flex;
   flex-direction: column;
@@ -77,7 +80,6 @@ body {
   font-size: 30px;
   padding: 0.5em;
   border-style: solid;
-  box-shadow: #aaa inset 0 0 6px;
   border-color: #bbb;
   border-width: 1px;
   margin-bottom: 0.5em;
