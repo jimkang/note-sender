@@ -44,7 +44,9 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 }
 
 var canvas = document.getElementById('resize-canvas');
+var thumbnailCanvas = document.getElementById('thumbnail-canvas');
 var ctx = canvas.getContext('2d');
+var thumbCtx = thumbnailCanvas.getContext('2d');
 var img;
 var rotations = 0;
 
@@ -73,7 +75,7 @@ function loadFileToCanvas({ mimeType, maxSideLength, file }) {
 
     canvas.width = newWidth;
     canvas.height = newHeight;
-    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+    drawImageToCanvases(img, newWidth, newHeight);
 
     loadedImageMIMEType = mimeType;
     imageIsLoaded = true;
@@ -111,11 +113,20 @@ function rotateImage() {
   // Sadly, I'm not entirely sure why this works.
   if (rotations % 2 === 1) {
     ctx.translate(-oldWidth / 2, -oldHeight / 2);
-    ctx.drawImage(img, 0, 0, canvas.height, canvas.width);
+    drawImageToCanvases(img, canvas.height, canvas.width);
   } else {
     ctx.translate(-canvas.width / 2, -canvas.height / 2);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    drawImageToCanvases(img, canvas.width, canvas.height);
   }
+}
+
+function drawImageToCanvases(img, width, height) {
+  ctx.drawImage(img, 0, 0, width, height);
+  // Copy stuff to the thumbnail canvas.
+  // TODO: Scale thumbnail appropriately.
+  thumbnailCanvas.width = 300;
+  thumbnailCanvas.height = 200;
+  thumbCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 300, 200);
 }
 
 module.exports = {
@@ -156,6 +167,7 @@ var objectFromDOM = of.ObjectFromDOM({});
 
 var noteArea = document.getElementById('note-area');
 var maxSideLengthField = document.getElementById('max-image-side-length');
+var imageControls = document.getElementById('image-controls');
 
 function wireControls({ saveNoteFlow }) {
   if (listenersInit) {
@@ -193,6 +205,8 @@ function wireControls({ saveNoteFlow }) {
   }
 
   function loadFile(file) {
+    imageControls.classList.remove('hidden');
+
     var maxSideLength = +maxSideLengthField.value;
     if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
       canvasImageOps.loadFileToCanvas({

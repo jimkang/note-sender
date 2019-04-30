@@ -91,6 +91,11 @@ input#media-file {
   margin-left: 0.5em;
 }
 
+#image-controls {
+  display: flex;
+  flex-direction: column;
+}
+
 button {
   text-trans#note-form: uppercase;
   color: #444;

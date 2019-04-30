@@ -7,6 +7,7 @@ var objectFromDOM = of.ObjectFromDOM({});
 
 var noteArea = document.getElementById('note-area');
 var maxSideLengthField = document.getElementById('max-image-side-length');
+var imageControls = document.getElementById('image-controls');
 
 function wireControls({ saveNoteFlow }) {
   if (listenersInit) {
@@ -44,6 +45,8 @@ function wireControls({ saveNoteFlow }) {
   }
 
   function loadFile(file) {
+    imageControls.classList.remove('hidden');
+
     var maxSideLength = +maxSideLengthField.value;
     if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
       canvasImageOps.loadFileToCanvas({
