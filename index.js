@@ -1,15 +1,16 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var RouteState = require('route-state');
 var handleError = require('handle-error-web');
 var wireControls = require('./dom/wire-controls');
 var saveNoteFlow = require('./flows/save-note-flow');
+var scanFlow = require('./flows/scan-flow');
 
 var routeState = RouteState({
   followRoute,
   windowObject: window
 });
 
-(function go() {
+(async function go() {
   window.onerror = reportTopLevelError;
   routeState.routeFromHash();
 })();
@@ -19,10 +20,10 @@ function reportTopLevelError(msg, url, lineNo, columnNo, error) {
 }
 
 function followRoute() {
-  wireControls({ addToRoute: routeState.addToRoute, saveNoteFlow });
+  wireControls({ addToRoute: routeState.addToRoute, saveNoteFlow, scanFlow });
 }
 
-},{"./dom/wire-controls":5,"./flows/save-note-flow":6,"handle-error-web":10,"route-state":15}],2:[function(require,module,exports){
+},{"./dom/wire-controls":5,"./flows/save-note-flow":6,"./flows/scan-flow":7,"handle-error-web":11,"route-state":17}],2:[function(require,module,exports){
 // Polyfill for canvas.toBlob from MDN.
 if (!HTMLCanvasElement.prototype.toBlob) {
   Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
@@ -147,7 +148,7 @@ function renderMessage({ messageType, message }) {
 
 module.exports = renderMessage;
 
-},{"d3-selection":9}],4:[function(require,module,exports){
+},{"d3-selection":10}],4:[function(require,module,exports){
 function resetFields() {
   var fileInput = document.getElementById('media-file');
   var textArea = document.querySelector('textarea');
@@ -169,7 +170,7 @@ var noteArea = document.getElementById('note-area');
 var maxSideLengthField = document.getElementById('max-image-side-length');
 var imageControls = document.getElementById('image-controls');
 
-function wireControls({ saveNoteFlow }) {
+function wireControls({ saveNoteFlow, scanFlow }) {
   if (listenersInit) {
     return;
   }
@@ -186,6 +187,7 @@ function wireControls({ saveNoteFlow }) {
   );
   d3.select('#media-file').on('change', onMediaFileChange);
   d3.select('#rotate-button').on('click', canvasImageOps.rotateImage);
+  d3.select('#scan-button').on('click', onScanClick);
 
   var file = getFile();
   if (file) {
@@ -197,6 +199,12 @@ function wireControls({ saveNoteFlow }) {
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
     saveNoteFlow({ note, archive, password, file: getFile() });
+  }
+
+  function onScanClick() {
+    if (scanFlow) {
+      scanFlow({ file: getFile() });
+    }
   }
 
   function onMediaFileChange() {
@@ -236,10 +244,10 @@ function getFile() {
 
 module.exports = wireControls;
 
-},{"./canvas-image-ops":2,"d3-selection":9,"object-form":13}],6:[function(require,module,exports){
+},{"./canvas-image-ops":2,"d3-selection":10,"object-form":14}],6:[function(require,module,exports){
 var request = require('basic-browser-request');
 var handleError = require('handle-error-web');
-var sb = require('standard-bail')();
+var oknok = require('oknok');
 var renderMessage = require('../dom/render-message');
 var resetFields = require('../dom/reset-fields');
 var waterfall = require('async-waterfall');
@@ -267,7 +275,7 @@ function saveNoteFlow({ note, archive, password, file }) {
   } else {
     reqOpts.headers['Content-Type'] = 'application/json';
     reqOpts.body = note;
-    request(reqOpts, sb(onSaved, handleError));
+    request(reqOpts, oknok({ ok: onSaved, nok: handleError }));
   }
 
   // This function assumes we have a file.
@@ -280,7 +288,7 @@ function saveNoteFlow({ note, archive, password, file }) {
     formData.append('altText', note.caption.slice(0, 100));
     if (file.type.startsWith('video/')) {
       formData.append('isVideo', true);
-      appendAndSend(file, sb(onSaved, handleError));
+      appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
     } else if (canvasImageOps.canvasHasImage()) {
       waterfall(
         [
@@ -346,8 +354,27 @@ function writeToDebugImage(fileBlob) {
 
 module.exports = saveNoteFlow;
 
-},{"../dom/canvas-image-ops":2,"../dom/render-message":3,"../dom/reset-fields":4,"async-waterfall":7,"basic-browser-request":8,"handle-error-web":10,"standard-bail":21}],7:[function(require,module,exports){
-(function (process){
+},{"../dom/canvas-image-ops":2,"../dom/render-message":3,"../dom/reset-fields":4,"async-waterfall":8,"basic-browser-request":9,"handle-error-web":11,"oknok":15}],7:[function(require,module,exports){
+/* global Tesseract */
+var handleError = require('handle-error-web');
+var noteArea = document.getElementById('note-area');
+
+function scanFlow({ file }) {
+  Tesseract.recognize(file, 'eng').then(insertText, handleError);
+
+  function insertText(scanResult) {
+    console.log(scanResult);
+    if (scanResult.text) {
+      noteArea.value =
+        noteArea.value + `\n<blockquote>${scanResult.text}</blockquote>\n`;
+    }
+  }
+}
+
+module.exports = scanFlow;
+
+},{"handle-error-web":11}],8:[function(require,module,exports){
+(function (process,setImmediate){
 // MIT license (by Elan Shanker).
 (function(globals) {
   'use strict';
@@ -424,8 +451,8 @@ module.exports = saveNoteFlow;
   }
 })(this);
 
-}).call(this,require('_process'))
-},{"_process":14}],8:[function(require,module,exports){
+}).call(this,require('_process'),require("timers").setImmediate)
+},{"_process":16,"timers":23}],9:[function(require,module,exports){
 function createRequestMaker() {
   // WARNING: onData does NOT work with binary data right now!
 
@@ -531,7 +558,7 @@ if (typeof module === 'object' && typeof module.exports === 'object') {
   module.exports = requestMaker.makeRequest;
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // https://d3js.org/d3-selection/ Version 1.3.0. Copyright 2018 Mike Bostock.
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1528,7 +1555,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 function handleError(error) {
   if (error) {
     console.error(error, error.stack);
@@ -1555,7 +1582,7 @@ function updateStatusMessage(text) {
 
 module.exports = handleError;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -3307,7 +3334,7 @@ function stubFalse() {
 module.exports = cloneDeep;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -3977,7 +4004,7 @@ function keysIn(object) {
 
 module.exports = defaults;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function ObjectFromDOM({
   dataAttribute = 'of',
   dataTypeAttribute = 'oftype',
@@ -4042,7 +4069,33 @@ module.exports = {
 };
 
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+function createOKNOKCallback({ ok, nok, log = console.log }) {
+  return function standardBailCallback(error) {
+    if (error) {
+      if (log) {
+        if (error.stack) {
+          log(error, error.stack);
+        } else {
+          log(error);
+        }
+      }
+      if (nok) {
+        nok(error);
+      }
+    } else if (ok) {
+      var okArgs = Array.prototype.slice.call(arguments, 1);
+      if (nok) {
+        okArgs.push(nok);
+      }
+      ok.apply(ok, okArgs);
+    }
+  };
+}
+
+module.exports = createOKNOKCallback;
+
+},{}],16:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -4228,7 +4281,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var qs = require('qs');
 var cloneDeep = require('lodash.clonedeep');
 var defaults = require('lodash.defaults');
@@ -4290,7 +4343,7 @@ function RouteState(opts) {
 
 module.exports = RouteState;
 
-},{"lodash.clonedeep":11,"lodash.defaults":12,"qs":17}],16:[function(require,module,exports){
+},{"lodash.clonedeep":12,"lodash.defaults":13,"qs":19}],18:[function(require,module,exports){
 'use strict';
 
 var replace = String.prototype.replace;
@@ -4310,7 +4363,7 @@ module.exports = {
     RFC3986: 'RFC3986'
 };
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var stringify = require('./stringify');
@@ -4323,7 +4376,7 @@ module.exports = {
     stringify: stringify
 };
 
-},{"./formats":16,"./parse":18,"./stringify":19}],18:[function(require,module,exports){
+},{"./formats":18,"./parse":20,"./stringify":21}],20:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -4499,7 +4552,7 @@ module.exports = function (str, opts) {
     return utils.compact(obj);
 };
 
-},{"./utils":20}],19:[function(require,module,exports){
+},{"./utils":22}],21:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -4711,7 +4764,7 @@ module.exports = function (object, opts) {
     return joined.length > 0 ? prefix + joined : '';
 };
 
-},{"./formats":16,"./utils":20}],20:[function(require,module,exports){
+},{"./formats":18,"./utils":22}],22:[function(require,module,exports){
 'use strict';
 
 var has = Object.prototype.hasOwnProperty;
@@ -4915,42 +4968,83 @@ exports.isBuffer = function isBuffer(obj) {
     return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
 };
 
-},{}],21:[function(require,module,exports){
-function StandardBail(createOpts) {
-  var log;
+},{}],23:[function(require,module,exports){
+(function (setImmediate,clearImmediate){
+var nextTick = require('process/browser.js').nextTick;
+var apply = Function.prototype.apply;
+var slice = Array.prototype.slice;
+var immediateIds = {};
+var nextImmediateId = 0;
 
-  if (createOpts) {
-    log = createOpts.log;
-  }
+// DOM APIs, for completeness
 
-  function createStandardBailCallback(success, outerCallback) {
-    return function standardBailCallback(error) {
-      if (error) {
-        if (log) {
-          if (error.stack) {
-            log(error, error.stack);
-          }
-          else {
-            log(error);
-          }
-        }
-        if (outerCallback) {
-          outerCallback(error);
-        }
-      }
-      else if (success) {
-        var successArgs = Array.prototype.slice.call(arguments, 1);
-        if (outerCallback) {
-          successArgs .push(outerCallback);
-        }
-        success.apply(success, successArgs);
-      }
-    };
-  }
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) { timeout.close(); };
 
-  return createStandardBailCallback;
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
 }
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(window, this._id);
+};
 
-module.exports = StandardBail;
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
 
-},{}]},{},[1]);
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// That's not how node.js implements it but the exposed api is the same.
+exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
+  var id = nextImmediateId++;
+  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+
+  immediateIds[id] = true;
+
+  nextTick(function onNextTick() {
+    if (immediateIds[id]) {
+      // fn.call() is faster so we optimize for the common use-case
+      // @see http://jsperf.com/call-apply-segu
+      if (args) {
+        fn.apply(null, args);
+      } else {
+        fn.call(null);
+      }
+      // Prevent ids from leaking
+      exports.clearImmediate(id);
+    }
+  });
+
+  return id;
+};
+
+exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
+  delete immediateIds[id];
+};
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+},{"process/browser.js":16,"timers":23}]},{},[1]);

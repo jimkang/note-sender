@@ -1,6 +1,6 @@
 var request = require('basic-browser-request');
 var handleError = require('handle-error-web');
-var sb = require('standard-bail')();
+var oknok = require('oknok');
 var renderMessage = require('../dom/render-message');
 var resetFields = require('../dom/reset-fields');
 var waterfall = require('async-waterfall');
@@ -28,7 +28,7 @@ function saveNoteFlow({ note, archive, password, file }) {
   } else {
     reqOpts.headers['Content-Type'] = 'application/json';
     reqOpts.body = note;
-    request(reqOpts, sb(onSaved, handleError));
+    request(reqOpts, oknok({ ok: onSaved, nok: handleError }));
   }
 
   // This function assumes we have a file.
@@ -41,7 +41,7 @@ function saveNoteFlow({ note, archive, password, file }) {
     formData.append('altText', note.caption.slice(0, 100));
     if (file.type.startsWith('video/')) {
       formData.append('isVideo', true);
-      appendAndSend(file, sb(onSaved, handleError));
+      appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
     } else if (canvasImageOps.canvasHasImage()) {
       waterfall(
         [

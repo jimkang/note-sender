@@ -41,7 +41,9 @@ function wireControls({ saveNoteFlow, scanFlow }) {
   }
 
   function onScanClick() {
-    scanFlow({ file: getFile });
+    if (scanFlow) {
+      scanFlow({ file: getFile() });
+    }
   }
 
   function onMediaFileChange() {
