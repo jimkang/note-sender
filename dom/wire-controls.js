@@ -9,7 +9,7 @@ var noteArea = document.getElementById('note-area');
 var maxSideLengthField = document.getElementById('max-image-side-length');
 var imageControls = document.getElementById('image-controls');
 
-function wireControls({ saveNoteFlow }) {
+function wireControls({ saveNoteFlow, scanFlow }) {
   if (listenersInit) {
     return;
   }
@@ -26,6 +26,7 @@ function wireControls({ saveNoteFlow }) {
   );
   d3.select('#media-file').on('change', onMediaFileChange);
   d3.select('#rotate-button').on('click', canvasImageOps.rotateImage);
+  d3.select('#scan-button').on('click', onScanClick);
 
   var file = getFile();
   if (file) {
@@ -37,6 +38,10 @@ function wireControls({ saveNoteFlow }) {
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
     saveNoteFlow({ note, archive, password, file: getFile() });
+  }
+
+  function onScanClick() {
+    scanFlow({ file: getFile });
   }
 
   function onMediaFileChange() {

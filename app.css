@@ -116,6 +116,10 @@ canvas {
   border: 1px solid black;
 }
 
+.bottom-space {
+  height: 10em;
+}
+
 @media all and (max-height: 568px) {
   body {
     font-size: 18px;
