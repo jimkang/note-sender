@@ -120,6 +120,27 @@ canvas {
   height: 10em;
 }
 
+#scan-message {
+  animation: glow 2s infinite;
+  color: #b6e438;
+  background-color: #222;
+  text-align: center;
+  border-radius: 0.25em;
+  font-size: 2em;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.2em;
+}
+
+@keyframes glow {
+  0% { box-shadow: #222 0 0 2px; text-shadow: #b6e438 0 0 2px; }
+  33% { box-shadow: #222 0 0 20px; text-shadow: #b6e438 0 0 20px; }
+  50% { box-shadow: #222 0 0 25px; text-shadow: #b6e438 0 0 25px; }
+  67% { box-shadow: #222 0 0 20px; text-shadow: #b6e438 0 0 20px; }
+  100% { box-shadow: #222 0 0 2px; text-shadow: #b6e438 0 0 2px; }
+}
+
 @media all and (max-height: 568px) {
   body {
     font-size: 18px;
