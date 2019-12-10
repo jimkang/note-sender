@@ -27,6 +27,7 @@ function wireControls({ saveNoteFlow, scanFlow }) {
   d3.select('#media-file').on('change', onMediaFileChange);
   d3.select('#rotate-button').on('click', canvasImageOps.rotateImage);
   d3.select('#scan-button').on('click', onScanClick);
+  d3.select('#remove-image-button').on('click', onRemoveImage);
 
   var file = getFile();
   if (file) {
@@ -49,6 +50,12 @@ function wireControls({ saveNoteFlow, scanFlow }) {
   function onMediaFileChange() {
     var file = this.files[0];
     loadFile(file);
+  }
+
+  function onRemoveImage() {
+    document.getElementById('media-file').value = '';
+    canvasImageOps.clearCanvases();
+    imageControls.classList.add('hidden');
   }
 
   function loadFile(file) {

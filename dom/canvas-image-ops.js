@@ -104,9 +104,15 @@ function drawImageToCanvases(img, width, height) {
   thumbCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 300, 200);
 }
 
+function clearCanvases() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  thumbCtx.clearRect(0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
+}
+
 module.exports = {
   loadFileToCanvas,
   getImageFromCanvas,
   canvasHasImage,
-  rotateImage
+  rotateImage,
+  clearCanvases
 };

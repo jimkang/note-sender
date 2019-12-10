@@ -130,11 +130,17 @@ function drawImageToCanvases(img, width, height) {
   thumbCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 300, 200);
 }
 
+function clearCanvases() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  thumbCtx.clearRect(0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
+}
+
 module.exports = {
   loadFileToCanvas,
   getImageFromCanvas,
   canvasHasImage,
-  rotateImage
+  rotateImage,
+  clearCanvases
 };
 
 },{}],3:[function(require,module,exports){
@@ -188,6 +194,7 @@ function wireControls({ saveNoteFlow, scanFlow }) {
   d3.select('#media-file').on('change', onMediaFileChange);
   d3.select('#rotate-button').on('click', canvasImageOps.rotateImage);
   d3.select('#scan-button').on('click', onScanClick);
+  d3.select('#remove-image-button').on('click', onRemoveImage);
 
   var file = getFile();
   if (file) {
@@ -210,6 +217,12 @@ function wireControls({ saveNoteFlow, scanFlow }) {
   function onMediaFileChange() {
     var file = this.files[0];
     loadFile(file);
+  }
+
+  function onRemoveImage() {
+    document.getElementById('media-file').value = '';
+    canvasImageOps.clearCanvases();
+    imageControls.classList.add('hidden');
   }
 
   function loadFile(file) {
