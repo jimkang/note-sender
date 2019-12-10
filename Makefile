@@ -26,4 +26,5 @@ sync:
 	scp index.html $(USER)@$(SERVER):$(APPDIR)
 	scp index.js $(USER)@$(SERVER):$(APPDIR)
 	scp app.css $(USER)@$(SERVER):$(APPDIR)
+	scp ext/tesseract.min.js $(USER)@$(SERVER):$(APPDIR)/ext
 
