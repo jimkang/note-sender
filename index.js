@@ -252,12 +252,16 @@ var renderMessage = require('../dom/render-message');
 var resetFields = require('../dom/reset-fields');
 var waterfall = require('async-waterfall');
 var canvasImageOps = require('../dom/canvas-image-ops');
+var savingMessage = document.getElementById('saving-message');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
 function saveNoteFlow({ note, archive, password, file }) {
+  savingMessage.textContent = 'Saving…';
+  savingMessage.classList.remove('hidden');
+
   note.caption = note.caption.replace(lineBreakRegex, '<br>');
 
   var reqOpts = {
@@ -316,13 +320,14 @@ function saveNoteFlow({ note, archive, password, file }) {
     if (res.statusCode < 300 && res.statusCode > 199) {
       renderMessage({
         message: `Saved note: "${note.caption}".`,
-        messageType: 'save-message'
+        messageType: 'saving-message'
       });
       resetFields();
     } else {
-      handleError(
-        new Error(`Could not save note. ${res.statusCode}: ${body.message}`)
-      );
+      renderMessage({
+        message: `Could not save note. ${res.statusCode}: ${body.message}`,
+        messageType: 'saving-message'
+      });
     }
   }
 }
@@ -356,24 +361,32 @@ module.exports = saveNoteFlow;
 
 },{"../dom/canvas-image-ops":2,"../dom/render-message":3,"../dom/reset-fields":4,"async-waterfall":8,"basic-browser-request":9,"handle-error-web":11,"oknok":15}],7:[function(require,module,exports){
 /* global Tesseract */
-var handleError = require('handle-error-web');
 var noteArea = document.getElementById('note-area');
+var scanMessage = document.getElementById('scan-message');
 
 function scanFlow({ file }) {
-  Tesseract.recognize(file, 'eng').then(insertText, handleError);
+  scanMessage.textContent = 'Scanning…';
+  scanMessage.classList.remove('hidden');
+  Tesseract.recognize(file, 'eng').then(insertText, handleScanError);
 
   function insertText(scanResult) {
+    scanMessage.classList.add('hidden');
     console.log(scanResult);
     if (scanResult.text) {
       noteArea.value =
         noteArea.value + `\n<blockquote>${scanResult.text}</blockquote>\n`;
     }
   }
+
+  function handleScanError(error) {
+    scanMessage.textContent = error.message;
+    scanMessage.classList.remove('hidden');
+  }
 }
 
 module.exports = scanFlow;
 
-},{"handle-error-web":11}],8:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (process,setImmediate){
 // MIT license (by Elan Shanker).
 (function(globals) {

@@ -1,51 +1,47 @@
 <html>
-<head>
-  <title>Note sender</title>
-  <link rel="stylesheet" href="app.css">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
+  <head>
+    <title>Note sender</title>
+    <link rel="stylesheet" href="app.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <div id="status-message" class="hidden"></div>
 
-<div id="status-message" class="hidden"></div>
+    <section id="note-form">
+      <section>
+        <h4>Archive</h4>
+        <input type="text" id="archive" value="" />
+        <h4>Password</h4>
+        <input type="password" id="password" value="" />
+        <h4>Note</h4>
+        <textarea id="note-area" data-of="caption"></textarea>
+        <span>
+          <button id="insert-link-button">Insert link</button>
+          <button id="insert-bq-button">Insert blockquote</button>
+        </span>
+        <h4>Media</h4>
+        <input type="file" id="media-file" accept="image/*, video/*" />
+        <div id="image-controls" class="hidden">
+          <canvas id="thumbnail-canvas"></canvas>
+          <button id="rotate-button">Rotate image</button>
+          <h5>Resize to this maximum length for image side</h5>
+          (Set it to "unlimited" to not resize at all)
+          <input type="text" id="max-image-side-length" value="2016" />
+        </div>
+      </section>
 
-<section id="note-form">
+      <button id="submit-note-button">Note!</button>
 
-<section>
-  <h4>Archive</h4>
-  <input type="text" id="archive" value="">
-  <h4>Password</h4>
-  <input type="password" id="password" value="">
-  <h4>Note</h4>
-  <textarea id="note-area" data-of="caption"></textarea>
-  <span>
-    <button id="insert-link-button">Insert link</button>
-    <button id="insert-bq-button">Insert blockquote</button>
-  </span>
-  <h4>Media</h4>
-  <input type="file" id="media-file" accept="image/*, video/*">
-  <div id="image-controls" class="hidden">
-    <canvas id="thumbnail-canvas"></canvas>
-    <button id="rotate-button">Rotate image</button>
-    <h5>Resize to this maximum length for image side</h5> (Set it to "unlimited" to not resize at all)
-    <input type="text" id="max-image-side-length" value="2016"></input>
-    <button id="scan-button">Scan text into note body</button>
-    <div id="scan-message" class="progress-message">Scanning…</div>
-  </div>
-</section>
+      <div id="saving-message" class="progress-message hidden">Saving…</div>
+    </section>
 
-<button id="submit-note-button">Note!</button>
+    <canvas id="resize-canvas" class="hidden"></canvas>
 
-<div id="sending-message" class="progress-message">Sending…</div>
-</section>
+    <!-- Space so that you don't have to scroll on mobile to hit save. -->
+    <div class="bottom-space"></div>
 
-<canvas id="resize-canvas" class="hidden"></canvas>
-
-<!-- Space so that you don't have to scroll on mobile to hit save. -->
-<div class="bottom-space"></div>
-
-<script src='ext/tesseract.min.js'></script>
-<script src="index.js"></script>
-
-</body>
+    <script src="ext/tesseract.min.js"></script>
+    <script src="index.js"></script>
+  </body>
 </html>

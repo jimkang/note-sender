@@ -5,12 +5,16 @@ var renderMessage = require('../dom/render-message');
 var resetFields = require('../dom/reset-fields');
 var waterfall = require('async-waterfall');
 var canvasImageOps = require('../dom/canvas-image-ops');
+var savingMessage = document.getElementById('saving-message');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
 function saveNoteFlow({ note, archive, password, file }) {
+  savingMessage.textContent = 'Saving…';
+  savingMessage.classList.remove('hidden');
+
   note.caption = note.caption.replace(lineBreakRegex, '<br>');
 
   var reqOpts = {
@@ -69,13 +73,14 @@ function saveNoteFlow({ note, archive, password, file }) {
     if (res.statusCode < 300 && res.statusCode > 199) {
       renderMessage({
         message: `Saved note: "${note.caption}".`,
-        messageType: 'save-message'
+        messageType: 'saving-message'
       });
       resetFields();
     } else {
-      handleError(
-        new Error(`Could not save note. ${res.statusCode}: ${body.message}`)
-      );
+      renderMessage({
+        message: `Could not save note. ${res.statusCode}: ${body.message}`,
+        messageType: 'saving-message'
+      });
     }
   }
 }
