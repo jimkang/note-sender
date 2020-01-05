@@ -4,6 +4,7 @@ var handleError = require('handle-error-web');
 var wireControls = require('./dom/wire-controls');
 var saveNoteFlow = require('./flows/save-note-flow');
 var scanFlow = require('./flows/scan-flow');
+var { version } = require('./package.json');
 
 var routeState = RouteState({
   followRoute,
@@ -11,6 +12,7 @@ var routeState = RouteState({
 });
 
 (async function go() {
+  renderVersion();
   window.onerror = reportTopLevelError;
   routeState.routeFromHash();
 })();
@@ -23,7 +25,12 @@ function followRoute() {
   wireControls({ addToRoute: routeState.addToRoute, saveNoteFlow, scanFlow });
 }
 
-},{"./dom/wire-controls":5,"./flows/save-note-flow":6,"./flows/scan-flow":7,"handle-error-web":11,"route-state":17}],2:[function(require,module,exports){
+function renderVersion() {
+  var versionInfo = document.getElementById('version-info');
+  versionInfo.textContent = version;
+}
+
+},{"./dom/wire-controls":5,"./flows/save-note-flow":6,"./flows/scan-flow":7,"./package.json":24,"handle-error-web":11,"route-state":17}],2:[function(require,module,exports){
 // Polyfill for canvas.toBlob from MDN.
 if (!HTMLCanvasElement.prototype.toBlob) {
   Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
@@ -205,7 +212,13 @@ function wireControls({ saveNoteFlow, scanFlow }) {
     var note = objectFromDOM(document.getElementById('note-form'));
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
-    saveNoteFlow({ note, archive, password, file: getFile() });
+    saveNoteFlow({
+      note,
+      archive,
+      password,
+      file: getFile(),
+      sendImageRaw: document.getElementById('send-image-raw-checkbox').checked
+    });
   }
 
   function onScanClick() {
@@ -271,7 +284,7 @@ const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
-function saveNoteFlow({ note, archive, password, file }) {
+function saveNoteFlow({ note, archive, password, file, sendImageRaw }) {
   savingMessage.textContent = 'Saving…';
   savingMessage.classList.remove('hidden');
 
@@ -305,6 +318,8 @@ function saveNoteFlow({ note, archive, password, file }) {
     formData.append('altText', note.caption.slice(0, 100));
     if (file.type.startsWith('video/')) {
       formData.append('isVideo', true);
+      appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
+    } else if (sendImageRaw) {
       appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
     } else if (canvasImageOps.canvasHasImage()) {
       waterfall(
@@ -5073,4 +5088,44 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":16,"timers":23}]},{},[1]);
+},{"process/browser.js":16,"timers":23}],24:[function(require,module,exports){
+module.exports={
+  "name": "note-sender",
+  "version": "1.0.1",
+  "description": "Send notes!",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jimkang/note-sender.git"
+  },
+  "keywords": [],
+  "author": "Jim Kang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimkang/note-sender/issues"
+  },
+  "homepage": "https://github.com/jimkang/note-sender",
+  "devDependencies": {
+    "browserify": "^16.5.0",
+    "uglify-es": "^3.1.9"
+  },
+  "dependencies": {
+    "async-waterfall": "^0.1.5",
+    "await-to-js": "^2.1.1",
+    "basic-browser-request": "^9.0.0",
+    "call-next-tick": "^2.0.1",
+    "d3-selection": "^1.3.0",
+    "handle-error-web": "^1.0.1",
+    "lodash.curry": "^4.1.1",
+    "object-form": "^0.9.2",
+    "oknok": "^3.0.0",
+    "route-state": "^1.1.2",
+    "tesseract.js": "^1.0.19"
+  }
+}
+
+},{}]},{},[1]);
