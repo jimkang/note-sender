@@ -38,7 +38,13 @@ function wireControls({ saveNoteFlow, scanFlow }) {
     var note = objectFromDOM(document.getElementById('note-form'));
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
-    saveNoteFlow({ note, archive, password, file: getFile() });
+    saveNoteFlow({
+      note,
+      archive,
+      password,
+      file: getFile(),
+      sendImageRaw: document.getElementById('send-image-raw-checkbox').checked
+    });
   }
 
   function onScanClick() {

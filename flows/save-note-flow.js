@@ -11,7 +11,7 @@ const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
-function saveNoteFlow({ note, archive, password, file }) {
+function saveNoteFlow({ note, archive, password, file, sendImageRaw }) {
   savingMessage.textContent = 'Saving…';
   savingMessage.classList.remove('hidden');
 
@@ -45,6 +45,8 @@ function saveNoteFlow({ note, archive, password, file }) {
     formData.append('altText', note.caption.slice(0, 100));
     if (file.type.startsWith('video/')) {
       formData.append('isVideo', true);
+      appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
+    } else if (sendImageRaw) {
       appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
     } else if (canvasImageOps.canvasHasImage()) {
       waterfall(
