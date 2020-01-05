@@ -28,3 +28,5 @@ sync:
 	scp app.css $(USER)@$(SERVER):$(APPDIR)
 	scp ext/tesseract.min.js $(USER)@$(SERVER):$(APPDIR)/ext
 
+deploy:
+	npm version patch && make build && git commit -a -m"Build." && make pushall
