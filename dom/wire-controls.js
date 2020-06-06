@@ -1,6 +1,5 @@
 var d3 = require('d3-selection');
 var of = require('object-form');
-var canvasImageOps = require('./canvas-image-ops');
 
 var listenersInit = false;
 var objectFromDOM = of.ObjectFromDOM({});
@@ -9,7 +8,7 @@ var noteArea = document.getElementById('note-area');
 var maxSideLengthField = document.getElementById('max-image-side-length');
 var imageControls = document.getElementById('image-controls');
 
-function wireControls({ saveNoteFlow, scanFlow }) {
+function wireControls({ saveNoteFlow, scanFlow, imageCanvasOps }) {
   if (listenersInit) {
     return;
   }
@@ -25,7 +24,7 @@ function wireControls({ saveNoteFlow, scanFlow }) {
     InsertIntoTextarea('<blockquote></blockquote>')
   );
   d3.select('#media-file').on('change', onMediaFileChange);
-  d3.select('#rotate-button').on('click', canvasImageOps.rotateImage);
+  d3.select('#rotate-button').on('click', imageCanvasOps.rotateImage);
   d3.select('#scan-button').on('click', onScanClick);
   d3.select('#remove-image-button').on('click', onRemoveImage);
 
@@ -60,7 +59,7 @@ function wireControls({ saveNoteFlow, scanFlow }) {
 
   function onRemoveImage() {
     document.getElementById('media-file').value = '';
-    canvasImageOps.clearCanvases();
+    imageCanvasOps.clearCanvases();
     imageControls.classList.add('hidden');
   }
 
@@ -69,7 +68,7 @@ function wireControls({ saveNoteFlow, scanFlow }) {
 
     var maxSideLength = +maxSideLengthField.value;
     if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
-      canvasImageOps.loadFileToCanvas({
+      imageCanvasOps.loadFileToCanvas({
         file,
         mimeType: file.type,
         maxSideLength
