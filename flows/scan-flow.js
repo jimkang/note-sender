@@ -1,6 +1,10 @@
 /* global Tesseract */
+var sanitizeHTML = require('sanitize-html');
+
 var noteArea = document.getElementById('note-area');
 var scanMessage = document.getElementById('scan-message');
+
+var alphaCharsAroundNewline = /(\w)\n(\w)/g;
 
 function scanFlow({ file }) {
   scanMessage.textContent = 'Scanning…';
@@ -9,10 +13,15 @@ function scanFlow({ file }) {
 
   function insertText(scanResult) {
     scanMessage.classList.add('hidden');
-    console.log(scanResult);
+    //console.log(scanResult);
     if (scanResult.text) {
+      const scannedText = sanitizeHTML(scanResult.text, {
+        allowedTags: []
+      })
+        .trim()
+        .replace(alphaCharsAroundNewline, '$1 $2');
       noteArea.value =
-        noteArea.value + `\n<blockquote>${scanResult.text}</blockquote>\n`;
+        noteArea.value + `\n<blockquote>${scannedText}</blockquote>\n`;
     }
   }
 
