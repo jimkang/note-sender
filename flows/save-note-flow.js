@@ -1,16 +1,16 @@
-var request = require('basic-browser-request');
-var handleError = require('handle-error-web');
-var oknok = require('oknok');
-var renderMessage = require('../dom/render-message');
-var resetFields = require('../dom/reset-fields');
-var waterfall = require('async-waterfall');
+import request from 'basic-browser-request';
+import handleError from 'handle-error-web';
+import oknok from 'oknok';
+import renderMessage from '../dom/render-message';
+import resetFields from '../dom/reset-fields';
+import waterfall from 'async-waterfall';
 var savingMessage = document.getElementById('saving-message');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
-function SaveNoteFlow({ imageCanvasOps }) {
+export default function SaveNoteFlow({ imageCanvasOps }) {
   return saveNoteFlow;
   function saveNoteFlow({ note, archive, password, file, sendImageRaw }) {
     savingMessage.textContent = 'Saving…';
@@ -92,5 +92,3 @@ function SaveNoteFlow({ imageCanvasOps }) {
     }
   }
 }
-
-module.exports = SaveNoteFlow;

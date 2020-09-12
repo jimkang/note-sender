@@ -1,9 +1,5 @@
-var d3 = require('d3-selection');
-
-function renderMessage({ messageType, message }) {
-  var slate = d3.select(`#${messageType}`);
-  slate.text(message);
-  slate.classed('hidden', false);
+export default function renderMessage({ messageType, message }) {
+  var slate = document.getElementById(messageType);
+  slate.textContent = message;
+  slate.classList.remove('hidden');
 }
-
-module.exports = renderMessage;

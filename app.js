@@ -1,10 +1,10 @@
-var RouteState = require('route-state');
-var handleError = require('handle-error-web');
-var wireControls = require('./dom/wire-controls');
-var SaveNoteFlow = require('./flows/save-note-flow');
-var scanFlow = require('./flows/scan-flow');
-var { version } = require('./package.json');
-var ImageCanvasOps = require('image-canvas-ops');
+import RouteState from 'route-state';
+import handleError from 'handle-error-web';
+import wireControls from './dom/wire-controls';
+import SaveNoteFlow from './flows/save-note-flow';
+import scanFlow from './flows/scan-flow';
+import { version } from './package.json';
+import ImageCanvasOps from 'image-canvas-ops';
 
 var imageCanvasOps = ImageCanvasOps({
   canvas: document.getElementById('resize-canvas'),

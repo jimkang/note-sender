@@ -1,5 +1,7 @@
-var d3 = require('d3-selection');
-var of = require('object-form');
+import OLPE from 'one-listener-per-element';
+import of from 'object-form';
+
+var { on } = OLPE();
 
 var listenersInit = false;
 var objectFromDOM = of.ObjectFromDOM({});
@@ -8,25 +10,28 @@ var noteArea = document.getElementById('note-area');
 var maxSideLengthField = document.getElementById('max-image-side-length');
 var imageControls = document.getElementById('image-controls');
 
-function wireControls({ saveNoteFlow, scanFlow, imageCanvasOps }) {
+export default function wireControls({
+  saveNoteFlow,
+  scanFlow,
+  imageCanvasOps
+}) {
   if (listenersInit) {
     return;
   }
   listenersInit = true;
 
-  d3.select('#submit-note-button').on('click', onSaveNote);
-  d3.select('#insert-link-button').on(
-    'click',
-    InsertIntoTextarea('<a href="URL"></a>')
-  );
-  d3.select('#insert-bq-button').on(
+  on('#submit-note-button', 'click', onSaveNote);
+  on('#insert-link-button', 'click', InsertIntoTextarea('<a href="URL"></a>'));
+  on(
+    '#insert-bq-button',
     'click',
     InsertIntoTextarea('<blockquote></blockquote>')
   );
-  d3.select('#media-file').on('change', onMediaFileChange);
-  d3.select('#rotate-button').on('click', imageCanvasOps.rotateImage);
-  d3.select('#scan-button').on('click', onScanClick);
-  d3.select('#remove-image-button').on('click', onRemoveImage);
+  on('#media-file', 'change', onMediaFileChange);
+  on('#rotate-button', 'click', imageCanvasOps.rotateImage);
+  on('#scan-button', 'click', onScanClick);
+
+  on('#remove-image-button', 'click', onRemoveImage);
 
   var file = getFile();
   if (file) {
@@ -92,5 +97,3 @@ function getFile() {
   }
   return file;
 }
-
-module.exports = wireControls;

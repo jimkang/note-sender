@@ -109,7 +109,7 @@ function clearCanvases() {
   thumbCtx.clearRect(0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
 }
 
-module.exports = {
+export default {
   loadFileToCanvas,
   getImageFromCanvas,
   canvasHasImage,
