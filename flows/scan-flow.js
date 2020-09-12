@@ -1,6 +1,4 @@
 /* global Tesseract */
-import sanitizeHTML from 'sanitize-html';
-
 var noteArea = document.getElementById('note-area');
 var scanMessage = document.getElementById('scan-message');
 
@@ -15,9 +13,7 @@ export default function scanFlow({ file }) {
     scanMessage.classList.add('hidden');
     //console.log(scanResult);
     if (scanResult.text) {
-      const scannedText = sanitizeHTML(scanResult.text, {
-        allowedTags: []
-      })
+      const scannedText = scanResult.text
         .trim()
         .replace(alphaCharsAroundNewline, '$1 $2');
       noteArea.value =
