@@ -19,13 +19,13 @@ export default function wireControls({
     return;
   }
   listenersInit = true;
-
+  debugger;
   on('#submit-note-button', 'click', onSaveNote);
-  on('#insert-link-button', 'click', InsertIntoTextarea('<a href="URL"></a>'));
+  on('#insert-link-button', 'click', insertIntoTextarea('<a href="URL"></a>'));
   on(
     '#insert-bq-button',
     'click',
-    InsertIntoTextarea('<blockquote></blockquote>')
+    insertIntoTextarea('<blockquote></blockquote>')
   );
   on('#media-file', 'change', onMediaFileChange);
   on('#rotate-button', 'click', imageCanvasOps.rotateImage);
@@ -82,7 +82,7 @@ export default function wireControls({
   }
 }
 
-function InsertIntoTextarea(text) {
+function insertIntoTextarea(text) {
   return function insertIntoTextarea() {
     noteArea.value = noteArea.value + text;
   };

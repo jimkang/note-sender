@@ -5,6 +5,7 @@ import SaveNoteFlow from './flows/save-note-flow';
 import scanFlow from './flows/scan-flow';
 import { version } from './package.json';
 import ImageCanvasOps from 'image-canvas-ops';
+import { renderEntry } from './dom/render-entry';
 
 var imageCanvasOps = ImageCanvasOps({
   canvas: document.getElementById('resize-canvas'),
@@ -19,6 +20,7 @@ var routeState = RouteState({
 (async function go() {
   renderVersion();
   window.onerror = reportTopLevelError;
+  debugger;
   routeState.routeFromHash();
 })();
 
@@ -27,6 +29,7 @@ function reportTopLevelError(msg, url, lineNo, columnNo, error) {
 }
 
 function followRoute() {
+  renderEntry(document.getElementById('entries'));
   wireControls({
     addToRoute: routeState.addToRoute,
     saveNoteFlow: SaveNoteFlow({ imageCanvasOps }),

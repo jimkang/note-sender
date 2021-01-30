@@ -15,29 +15,8 @@
         <input type="text" id="archive" value="" />
         <h4>Password</h4>
         <input type="password" id="password" value="" />
-        <h4>Note</h4>
-        <textarea id="note-area" data-of="caption"></textarea>
-        <span>
-          <button id="insert-link-button">Insert link</button>
-          <button id="insert-bq-button">Insert blockquote</button>
-        </span>
-        <h4>Media</h4>
-        <input type="file" id="media-file" accept="image/*, video/*" />
-        <div id="image-controls" class="hidden">
-          <canvas id="thumbnail-canvas"></canvas>
-          <button id="rotate-button">Rotate image</button>
-          <h5>Resize to this maximum length for image side</h5>
-          (Set it to "unlimited" to not resize at all)
-          <input type="text" id="max-image-side-length" value="2016" />
-          <button id="remove-image-button">Remove image</button>
-          <button id="scan-button">Scan text into note body</button>
-          <input id="send-image-raw-checkbox" type="checkbox" />
-          <label for="send-image-raw-checkbox"
-            >Send the image raw without resizing</label
-          >
-          <div id="scan-message" class="progress-message hidden">Scanning…</div>
-        </div>
-      </section>
+        <ul id="entries"></ul>
+     </section>
 
       <button id="submit-note-button">Note!</button>
 
