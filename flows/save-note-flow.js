@@ -10,9 +10,17 @@ const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
-export default function SaveNoteFlow({ imageCanvasOps }) {
+export default function SaveNoteFlow() {
   return saveNoteFlow;
-  function saveNoteFlow({ note, archive, password, file, sendImageRaw }) {
+
+  function saveNoteFlow({
+    note,
+    archive,
+    password,
+    file,
+    canvasImageOps,
+    sendImageRaw
+  }) {
     savingMessage.textContent = 'Saving…';
     savingMessage.classList.remove('hidden');
 
@@ -49,10 +57,10 @@ export default function SaveNoteFlow({ imageCanvasOps }) {
         appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
       } else if (sendImageRaw) {
         appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
-      } else if (imageCanvasOps.canvasHasImage()) {
+      } else if (canvasImageOps.canvasHasImage()) {
         waterfall(
           [
-            imageCanvasOps.getImageFromCanvas,
+            canvasImageOps.getImageFromCanvas,
             // writeToDebugImage,
             appendAndSend,
             onSaved

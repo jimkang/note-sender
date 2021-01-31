@@ -1,16 +1,8 @@
 import RouteState from 'route-state';
 import handleError from 'handle-error-web';
-import wireControls from './dom/wire-controls';
-import SaveNoteFlow from './flows/save-note-flow';
-import scanFlow from './flows/scan-flow';
+import { wireControlsGlobal } from './dom/wire-controls';
 import { version } from './package.json';
-import ImageCanvasOps from 'image-canvas-ops';
 import { renderEntry } from './dom/render-entry';
-
-var imageCanvasOps = ImageCanvasOps({
-  canvas: document.getElementById('resize-canvas'),
-  thumbnailCanvas: document.getElementById('thumbnail-canvas')
-});
 
 var routeState = RouteState({
   followRoute,
@@ -20,7 +12,6 @@ var routeState = RouteState({
 (async function go() {
   renderVersion();
   window.onerror = reportTopLevelError;
-  debugger;
   routeState.routeFromHash();
 })();
 
@@ -29,12 +20,9 @@ function reportTopLevelError(msg, url, lineNo, columnNo, error) {
 }
 
 function followRoute() {
-  renderEntry(document.getElementById('entries'));
-  wireControls({
-    addToRoute: routeState.addToRoute,
-    saveNoteFlow: SaveNoteFlow({ imageCanvasOps }),
-    scanFlow,
-    imageCanvasOps
+  renderEntry(document.getElementById('entries'), 'base-entry');
+  wireControlsGlobal({
+    rootSel: '#base-entry'
   });
 }
 
