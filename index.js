@@ -3255,6 +3255,7 @@
 	    rotateImage,
 	    clearCanvases
 	  };
+
 	  function loadFileToCanvas({ mimeType, maxSideLength, file }) {
 	    img = new Image();
 	    img.addEventListener('load', drawToCanvas);
@@ -3375,9 +3376,11 @@
 `;
 
 	function renderEntry(parentEl, id) {
-	  parentEl.innerHTML =
-	    parentEl.innerHTML +
-	    `<li id="${id}" class="entry-container">${entryBase}</li>`;
+	  var li = document.createElement('li');
+	  li.setAttribute('id', id);
+	  li.setAttribute('class', 'entry-container');
+	  parentEl.append(li);
+	  li.innerHTML = entryBase;
 	}
 
 	var basicrequest = createCommonjsModule(function (module) {
@@ -3726,7 +3729,6 @@
 
 	var { on } = oneListenerPerElement();
 
-	var listenersInit = false;
 	var objectFromDOM = objectForm.ObjectFromDOM({});
 	var entriesRootEl = document.getElementById('entries');
 
@@ -3746,7 +3748,7 @@
 	    entriesRootEl.innerHTML = '';
 	    var files = this.files;
 	    for (var i = 0; i < files.length; ++i) {
-	      loadFile(files[i]);
+	      loadFile(files[i], i);
 	    }
 	  }
 
@@ -3762,11 +3764,6 @@
 	}
 
 	function wireControls({ rootSel, file }) {
-	  if (listenersInit) {
-	    return;
-	  }
-	  listenersInit = true;
-
 	  var saveNoteFlow = SaveNoteFlow();
 	  var canvasImageOps = CanvasImageOps({ rootSel });
 
@@ -3821,7 +3818,6 @@
 	  }
 
 	  function onRemoveImage() {
-	    document.querySelector(`${rootSel} media-file`).value = '';
 	    canvasImageOps.clearCanvases();
 	    imageControls.classList.add('hidden');
 	  }

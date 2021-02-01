@@ -7,7 +7,6 @@ import scanFlow from '../flows/scan-flow';
 
 var { on } = OLPE();
 
-var listenersInit = false;
 var objectFromDOM = of.ObjectFromDOM({});
 var entriesRootEl = document.getElementById('entries');
 
@@ -27,7 +26,7 @@ export function wireControlsGlobal() {
     entriesRootEl.innerHTML = '';
     var files = this.files;
     for (var i = 0; i < files.length; ++i) {
-      loadFile(files[i]);
+      loadFile(files[i], i);
     }
   }
 
@@ -43,11 +42,6 @@ export function wireControlsGlobal() {
 }
 
 export function wireControls({ rootSel, file }) {
-  if (listenersInit) {
-    return;
-  }
-  listenersInit = true;
-
   var saveNoteFlow = SaveNoteFlow();
   var canvasImageOps = CanvasImageOps({ rootSel });
 
@@ -102,7 +96,6 @@ export function wireControls({ rootSel, file }) {
   }
 
   function onRemoveImage() {
-    document.querySelector(`${rootSel} media-file`).value = '';
     canvasImageOps.clearCanvases();
     imageControls.classList.add('hidden');
   }

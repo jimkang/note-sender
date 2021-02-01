@@ -36,6 +36,7 @@ function CanvasImageOps({ rootSel }) {
     rotateImage,
     clearCanvases
   };
+
   function loadFileToCanvas({ mimeType, maxSideLength, file }) {
     img = new Image();
     img.addEventListener('load', drawToCanvas);

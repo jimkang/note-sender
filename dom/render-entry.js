@@ -26,7 +26,9 @@ const entryBase = `<h4>Note</h4>
 `;
 
 export function renderEntry(parentEl, id) {
-  parentEl.innerHTML =
-    parentEl.innerHTML +
-    `<li id="${id}" class="entry-container">${entryBase}</li>`;
+  var li = document.createElement('li');
+  li.setAttribute('id', id);
+  li.setAttribute('class', 'entry-container');
+  parentEl.append(li);
+  li.innerHTML = entryBase;
 }
