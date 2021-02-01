@@ -18,11 +18,11 @@ const entryBase = `<h4>Note</h4>
     <label for="send-image-raw-checkbox"
       >Send the image raw without resizing</label
     >
-    <div class="scan-message" class="progress-message hidden">Scanning…</div>
+    <div class="scan-message progress-message hidden">Scanning…</div>
   </div>
 
   <button class="submit-note-button">Note!</button>
-  <div class="saving-message" class="progress-message hidden">Saving…</div>
+  <div class="saving-message progress-message hidden">Saving…</div>
 `;
 
 export function renderEntry(parentEl, id) {
