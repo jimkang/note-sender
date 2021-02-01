@@ -67,12 +67,18 @@ export function wireControls({ rootSel, file }) {
   on(`${rootSel} .remove-image-button`, 'click', onRemoveImage);
 
   var maxSideLength = +maxSideLengthField.value;
-  if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
-    canvasImageOps.loadFileToCanvas({
-      file,
-      mimeType: file.type,
-      maxSideLength
-    });
+  if (file) {
+    if (file.type.startsWith('image/') && !isNaN(maxSideLength)) {
+      canvasImageOps.loadFileToCanvas({
+        file,
+        mimeType: file.type,
+        maxSideLength
+      });
+    } else if (file.type.startsWith('video/')) {
+      document
+        .querySelector(`${rootSel} .video-preview`)
+        .setAttribute('src', URL.createObjectURL(file));
+    }
   }
 
   function onSaveNote() {

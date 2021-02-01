@@ -3363,7 +3363,8 @@
     <h5>Resize to this maximum length for image side</h5>
     (Set it to "unlimited" to not resize at all)
     <input type="text" class="max-image-side-length" value="2016" />
-    <button class="remove-image-button">Remove image</button>
+    <video class="video-preview" controls></video>
+    <button class="remove-image-button">Remove media </button>
     <button class="scan-button">Scan text into note body</button>
     <input class="send-image-raw-checkbox" type="checkbox" />
     <label for="send-image-raw-checkbox"
@@ -3790,12 +3791,18 @@
 	  on(`${rootSel} .remove-image-button`, 'click', onRemoveImage);
 
 	  var maxSideLength = +maxSideLengthField.value;
-	  if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
-	    canvasImageOps.loadFileToCanvas({
-	      file,
-	      mimeType: file.type,
-	      maxSideLength
-	    });
+	  if (file) {
+	    if (file.type.startsWith('image/') && !isNaN(maxSideLength)) {
+	      canvasImageOps.loadFileToCanvas({
+	        file,
+	        mimeType: file.type,
+	        maxSideLength
+	      });
+	    } else if (file.type.startsWith('video/')) {
+	      document
+	        .querySelector(`${rootSel} .video-preview`)
+	        .setAttribute('src', URL.createObjectURL(file));
+	    }
 	  }
 
 	  function onSaveNote() {

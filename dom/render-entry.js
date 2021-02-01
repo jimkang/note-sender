@@ -13,7 +13,8 @@ const entryBase = `<h4>Note</h4>
     <h5>Resize to this maximum length for image side</h5>
     (Set it to "unlimited" to not resize at all)
     <input type="text" class="max-image-side-length" value="2016" />
-    <button class="remove-image-button">Remove image</button>
+    <video class="video-preview" controls></video>
+    <button class="remove-image-button">Remove media </button>
     <button class="scan-button">Scan text into note body</button>
     <input class="send-image-raw-checkbox" type="checkbox" />
     <label for="send-image-raw-checkbox"
