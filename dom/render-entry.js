@@ -1,4 +1,5 @@
 const entryBase = `<h4>Note</h4>
+<section class="note-form">
   <textarea class="note-area" data-of="caption"></textarea>
   <span>
     <button class="insert-link-button">Insert link</button>
@@ -23,7 +24,7 @@ const entryBase = `<h4>Note</h4>
 
   <button class="submit-note-button">Note!</button>
   <div class="saving-message progress-message hidden">Saving…</div>
-`;
+</section>`;
 
 export function renderEntry(parentEl, id) {
   var li = document.createElement('li');

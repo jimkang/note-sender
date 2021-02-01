@@ -3349,6 +3349,7 @@
 	}
 
 	const entryBase = `<h4>Note</h4>
+<section class="note-form">
   <textarea class="note-area" data-of="caption"></textarea>
   <span>
     <button class="insert-link-button">Insert link</button>
@@ -3373,7 +3374,7 @@
 
   <button class="submit-note-button">Note!</button>
   <div class="saving-message progress-message hidden">Saving…</div>
-`;
+</section>`;
 
 	function renderEntry(parentEl, id) {
 	  var li = document.createElement('li');
@@ -3515,8 +3516,8 @@
 
 	var oknok = createOKNOKCallback;
 
-	function renderMessage({ messageType, message }) {
-	  var slate = document.getElementById(messageType);
+	function renderMessage({ sel, message }) {
+	  var slate = document.querySelector(sel);
 	  slate.textContent = message;
 	  slate.classList.remove('hidden');
 	}
@@ -3601,13 +3602,13 @@
 	})(commonjsGlobal);
 	});
 
-	var savingMessage = document.getElementById('saving-message');
-
 	const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 	// const apiServerBaseURL = 'http://localhost:5678/note';
 	var lineBreakRegex = /\n/g;
 
-	function SaveNoteFlow() {
+	function SaveNoteFlow({ rootSel }) {
+	  var savingMessage = document.querySelector(`${rootSel} .saving-message`);
+
 	  return saveNoteFlow;
 
 	  function saveNoteFlow({
@@ -3669,7 +3670,7 @@
 	          'Unknown file: No image is loaded to canvas, nor is the file a video.';
 	        renderMessage({
 	          message: `Could not save note. ${errorMessage}`,
-	          messageType: 'saving-message'
+	          sel: `${rootSel} .saving-message`
 	        });
 	        throw new Error(errorMessage);
 	      }
@@ -3685,13 +3686,13 @@
 	      if (res.statusCode < 300 && res.statusCode > 199) {
 	        renderMessage({
 	          message: `Saved note: "${note.caption}".`,
-	          messageType: 'saving-message'
+	          sel: `${rootSel} .saving-message`
 	        });
 	        resetFields();
 	      } else {
 	        renderMessage({
 	          message: `Could not save note. ${res.statusCode}: ${body.message}`,
-	          messageType: 'saving-message'
+	          sel: `${rootSel} .saving-message`
 	        });
 	      }
 	    }
@@ -3734,15 +3735,11 @@
 
 	function wireControlsGlobal() {
 	  on('#media-file', 'change', onMediaFileChange);
-	  //function getFile() {
-	  //var files = document.querySelector(`${rootSel} media-file').files;
-	  //
-	  //var file;
-	  //if (files.length > 0) {
-	  //file = files[0];
-	  //}
-	  //return file;
-	  //}
+
+	  // If there are files already selected from a
+	  // previous load of this page, load them into
+	  // the entries.
+	  onMediaFileChange.bind(document.getElementById('media-file'))();
 
 	  function onMediaFileChange() {
 	    entriesRootEl.innerHTML = '';
@@ -3764,7 +3761,7 @@
 	}
 
 	function wireControls({ rootSel, file }) {
-	  var saveNoteFlow = SaveNoteFlow();
+	  var saveNoteFlow = SaveNoteFlow({ rootSel });
 	  var canvasImageOps = CanvasImageOps({ rootSel });
 
 	  var noteArea = document.querySelector(`${rootSel} note-area`);
@@ -3772,7 +3769,7 @@
 	    `${rootSel} .max-image-side-length`
 	  );
 	  var imageControls = document.querySelector(`${rootSel} image-controls`);
-	  on('.submit-note-button', 'click', onSaveNote);
+	  on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
 	  on(
 	    `${rootSel} .insert-link-button`,
 	    'click',
@@ -3798,7 +3795,7 @@
 	  }
 
 	  function onSaveNote() {
-	    var note = objectFromDOM(document.querySelector(`${rootSel} note-form`));
+	    var note = objectFromDOM(document.querySelector(`${rootSel} .note-form`));
 	    var archive = document.getElementById('archive').value;
 	    var password = document.getElementById('password').value;
 	    saveNoteFlow({

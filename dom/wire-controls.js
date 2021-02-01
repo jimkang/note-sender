@@ -12,15 +12,11 @@ var entriesRootEl = document.getElementById('entries');
 
 export function wireControlsGlobal() {
   on('#media-file', 'change', onMediaFileChange);
-  //function getFile() {
-  //var files = document.querySelector(`${rootSel} media-file').files;
-  //
-  //var file;
-  //if (files.length > 0) {
-  //file = files[0];
-  //}
-  //return file;
-  //}
+
+  // If there are files already selected from a
+  // previous load of this page, load them into
+  // the entries.
+  onMediaFileChange.bind(document.getElementById('media-file'))();
 
   function onMediaFileChange() {
     entriesRootEl.innerHTML = '';
@@ -42,7 +38,7 @@ export function wireControlsGlobal() {
 }
 
 export function wireControls({ rootSel, file }) {
-  var saveNoteFlow = SaveNoteFlow();
+  var saveNoteFlow = SaveNoteFlow({ rootSel });
   var canvasImageOps = CanvasImageOps({ rootSel });
 
   var noteArea = document.querySelector(`${rootSel} note-area`);
@@ -50,7 +46,7 @@ export function wireControls({ rootSel, file }) {
     `${rootSel} .max-image-side-length`
   );
   var imageControls = document.querySelector(`${rootSel} image-controls`);
-  on('.submit-note-button', 'click', onSaveNote);
+  on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
   on(
     `${rootSel} .insert-link-button`,
     'click',
@@ -76,7 +72,7 @@ export function wireControls({ rootSel, file }) {
   }
 
   function onSaveNote() {
-    var note = objectFromDOM(document.querySelector(`${rootSel} note-form`));
+    var note = objectFromDOM(document.querySelector(`${rootSel} .note-form`));
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
     saveNoteFlow({

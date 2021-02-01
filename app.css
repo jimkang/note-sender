@@ -20,15 +20,14 @@ body {
   padding: 1em;
 }
 
-#note-form {
+.note-form {
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 20em;
 }
 
-#note-form input {
-  /*! font-family: Georgia, serif; */
+input {
   font-size: 30px;
   padding: 0.5em;
   border-style: solid;
@@ -42,7 +41,7 @@ input#media-file {
 }
 
 
-#note-form section {
+.note-form section {
   margin-bottom: 1em;
   background-color: hsla(0, 0%, 0%, 0.02);
   padding: 1em;
@@ -50,31 +49,31 @@ input#media-file {
   flex-direction: column;
 }
 
-#note-form section h4:first-child {
+.note-form section h4:first-child {
   margin-top: 0;
 }
 
-#note-form li {
+.note-form li {
   font-family: Georgia, serif;
   margin-bottom: 1em;
 }
 
-#note-form h3 {
+.note-form h3 {
   font-weight: 200;
 }
 
-#note-form h4 {
-  font-weight: 200;
-  margin-bottom: 0.5em;
-}
-
-#note-form h5 {
+.note-form h4 {
   font-weight: 200;
   margin-bottom: 0.5em;
 }
 
+.note-form h5 {
+  font-weight: 200;
+  margin-bottom: 0.5em;
+}
 
-#note-form textarea {
+
+.note-form textarea {
   font-family: Georgia, serif;
   background-color: white;
   font-size: 30px;
@@ -86,7 +85,7 @@ input#media-file {
   height: 10em;
 }
 
-#note-form .remove-element-button {
+.note-form .remove-element-button {
   cursor: pointer;
   margin-left: 0.5em;
 }
@@ -153,15 +152,15 @@ canvas {
     font-size: 18px;
   }
 
-  #note-form section {
+  .note-form section {
     padding: 0.5em;
   }
 
-  #note-form input {
+  .note-form input {
     font-size: 18px;
   }
 
-  #note-form textarea {
+  .note-form textarea {
     font-size: 18px;
   }
 }
