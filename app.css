@@ -1,11 +1,14 @@
 body {
   font-size: 24pt;
   font-family: Ubuntu, roboto, noto, segoe ui, arial, -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, sans-serif;
+  background-color: #ffe264;
+  color: #444;
+}
+
+.ccol {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #ffe264;
-  color: #444;
 }
 
 .hidden {
@@ -14,21 +17,18 @@ body {
   transition: opacity 1s;
 }
 
-#status-message {
+.status-message {
   background-color: #ffffee;
   margin: 1em;
   padding: 1em;
 }
 
-#note-form {
-  display: flex;
-  flex-direction: column;
+.note-form {
   width: 100%;
   max-width: 20em;
 }
 
-#note-form input {
-  /*! font-family: Georgia, serif; */
+input {
   font-size: 30px;
   padding: 0.5em;
   border-style: solid;
@@ -36,13 +36,13 @@ body {
   border-width: 1px;
 }
 
-input#media-file {
+input.media-file {
   padding-left: 0;
   border-width: 0;
 }
 
 
-#note-form section {
+.note-form section {
   margin-bottom: 1em;
   background-color: hsla(0, 0%, 0%, 0.02);
   padding: 1em;
@@ -50,31 +50,30 @@ input#media-file {
   flex-direction: column;
 }
 
-#note-form section h4:first-child {
+.note-form section h4:first-child {
   margin-top: 0;
 }
 
-#note-form li {
+.note-form li {
   font-family: Georgia, serif;
   margin-bottom: 1em;
 }
 
-#note-form h3 {
+.note-form h3 {
   font-weight: 200;
 }
 
-#note-form h4 {
-  font-weight: 200;
-  margin-bottom: 0.5em;
-}
-
-#note-form h5 {
+.note-form h4 {
   font-weight: 200;
   margin-bottom: 0.5em;
 }
 
+.note-form h5 {
+  font-weight: 200;
+  margin-bottom: 0.5em;
+}
 
-#note-form textarea {
+.note-form textarea {
   font-family: Georgia, serif;
   background-color: white;
   font-size: 30px;
@@ -86,12 +85,12 @@ input#media-file {
   height: 10em;
 }
 
-#note-form .remove-element-button {
+.note-form .remove-element-button {
   cursor: pointer;
   margin-left: 0.5em;
 }
 
-#image-controls {
+.image-controls {
   display: flex;
   flex-direction: column;
 }
@@ -133,6 +132,25 @@ canvas {
   padding: 0.2em;
 }
 
+.video-preview {
+  max-width: 100%;
+}
+
+#entries {
+  list-style-type: none;
+  padding: 0;
+}
+
+.entry-container {
+  border: solid hsla(60, 30%, 10%, 0.2) 1px;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.entry-container h4 {
+  margin-top: 0;
+}
+
 @keyframes glow {
   0% { box-shadow: #222 0 0 2px; text-shadow: #b6e438 0 0 2px; }
   33% { box-shadow: #222 0 0 20px; text-shadow: #b6e438 0 0 20px; }
@@ -153,15 +171,15 @@ canvas {
     font-size: 18px;
   }
 
-  #note-form section {
+  .note-form section {
     padding: 0.5em;
   }
 
-  #note-form input {
+  input {
     font-size: 18px;
   }
 
-  #note-form textarea {
+  .note-form textarea {
     font-size: 18px;
   }
 }

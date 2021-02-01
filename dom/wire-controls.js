@@ -1,99 +1,131 @@
 import OLPE from 'one-listener-per-element';
 import of from 'object-form';
+import CanvasImageOps from './canvas-image-ops';
+import { renderEntry } from './render-entry';
+import SaveNoteFlow from '../flows/save-note-flow';
+import scanFlow from '../flows/scan-flow';
 
 var { on } = OLPE();
 
-var listenersInit = false;
 var objectFromDOM = of.ObjectFromDOM({});
+var entriesRootEl = document.getElementById('entries');
 
-var noteArea = document.getElementById('note-area');
-var maxSideLengthField = document.getElementById('max-image-side-length');
-var imageControls = document.getElementById('image-controls');
-
-export default function wireControls({
-  saveNoteFlow,
-  scanFlow,
-  imageCanvasOps
-}) {
-  if (listenersInit) {
-    return;
-  }
-  listenersInit = true;
-
-  on('#submit-note-button', 'click', onSaveNote);
-  on('#insert-link-button', 'click', InsertIntoTextarea('<a href="URL"></a>'));
+export function wireControlsGlobal() {
   on(
-    '#insert-bq-button',
+    '#clear-entries-button',
     'click',
-    InsertIntoTextarea('<blockquote></blockquote>')
+    () => clearEntries() && renderEntry(entriesRootEl, 'base-entry')
   );
   on('#media-file', 'change', onMediaFileChange);
-  on('#rotate-button', 'click', imageCanvasOps.rotateImage);
-  on('#scan-button', 'click', onScanClick);
 
-  on('#remove-image-button', 'click', onRemoveImage);
+  wireControls({ rootSel: '#base-entry' });
+  // If there are files already selected from a
+  // previous load of this page, load them into
+  // the entries.
+  onMediaFileChange.bind(document.getElementById('media-file'))();
 
-  var file = getFile();
+  function onMediaFileChange() {
+    var files = this.files;
+    if (files.length < 1) {
+      return;
+    }
+    clearEntries();
+    for (var i = 0; i < files.length; ++i) {
+      loadFile(files[i], i);
+    }
+  }
+
+  function loadFile(file, i) {
+    // Create an entry for this.
+    var id = `media-entry-${i}`;
+    renderEntry(entriesRootEl, id);
+    wireControls({
+      rootSel: `#${id}`,
+      file
+    });
+  }
+
+  function clearEntries() {
+    entriesRootEl.innerHTML = '';
+    return true;
+  }
+}
+
+export function wireControls({ rootSel, file }) {
+  var saveNoteFlow = SaveNoteFlow({ rootSel });
+  var canvasImageOps = CanvasImageOps({ rootSel });
+
+  var noteArea = document.querySelector(`${rootSel} .note-area`);
+  var maxSideLengthField = document.querySelector(
+    `${rootSel} .max-image-side-length`
+  );
+  var imageControls = document.querySelector(`${rootSel} .image-controls`);
+  var videoPreviewEl = document.querySelector(`${rootSel} .video-preview`);
+  var thumbnailEl = document.querySelector(`${rootSel} .thumbnail-canvas`);
+
+  on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
+  on(
+    `${rootSel} .insert-link-button`,
+    'click',
+    insertIntoTextarea('<a href="URL"></a>')
+  );
+  on(
+    `${rootSel} .insert-bq-button`,
+    'click',
+    insertIntoTextarea('<blockquote></blockquote>')
+  );
+  on(`${rootSel} .rotate-button`, 'click', canvasImageOps.rotateImage);
+  on(`${rootSel} .scan-button`, 'click', onScanClick);
+
+  on(`${rootSel} .remove-image-button`, 'click', onRemoveImage);
+
+  var maxSideLength = +maxSideLengthField.value;
   if (file) {
-    loadFile(file);
+    imageControls.classList.remove('hidden');
+
+    if (file.type.startsWith('image/') && !isNaN(maxSideLength)) {
+      canvasImageOps.loadFileToCanvas({
+        file,
+        mimeType: file.type,
+        maxSideLength
+      });
+      thumbnailEl.classList.remove('hidden');
+    } else if (file.type.startsWith('video/')) {
+      videoPreviewEl.setAttribute('src', URL.createObjectURL(file));
+      videoPreviewEl.classList.remove('hidden');
+    }
   }
 
   function onSaveNote() {
-    var note = objectFromDOM(document.getElementById('note-form'));
+    var note = objectFromDOM(document.querySelector(`${rootSel} .note-form`));
     var archive = document.getElementById('archive').value;
     var password = document.getElementById('password').value;
     saveNoteFlow({
       note,
       archive,
       password,
-      file: getFile(),
-      sendImageRaw: document.getElementById('send-image-raw-checkbox').checked
+      file,
+      canvasImageOps, // TODO: Just pass image?
+      sendImageRaw: document.querySelector(
+        `${rootSel} .send-image-raw-checkbox`
+      ).checked
     });
   }
 
   function onScanClick() {
     if (scanFlow) {
-      scanFlow({ file: getFile() });
+      scanFlow({ rootSel, file });
     }
-  }
-
-  function onMediaFileChange() {
-    var file = this.files[0];
-    loadFile(file);
   }
 
   function onRemoveImage() {
-    document.getElementById('media-file').value = '';
-    imageCanvasOps.clearCanvases();
+    canvasImageOps.clearCanvases();
     imageControls.classList.add('hidden');
   }
 
-  function loadFile(file) {
-    imageControls.classList.remove('hidden');
-
-    var maxSideLength = +maxSideLengthField.value;
-    if (file && file.type.startsWith('image/') && !isNaN(maxSideLength)) {
-      imageCanvasOps.loadFileToCanvas({
-        file,
-        mimeType: file.type,
-        maxSideLength
-      });
-    }
+  function insertIntoTextarea(text) {
+    return function insertIntoTextarea() {
+      noteArea.value = noteArea.value + text;
+    };
   }
-}
-
-function InsertIntoTextarea(text) {
-  return function insertIntoTextarea() {
-    noteArea.value = noteArea.value + text;
-  };
-}
-
-function getFile() {
-  var files = document.getElementById('media-file').files;
-
-  var file;
-  if (files.length > 0) {
-    file = files[0];
-  }
-  return file;
 }

@@ -4,15 +4,24 @@ import oknok from 'oknok';
 import renderMessage from '../dom/render-message';
 import resetFields from '../dom/reset-fields';
 import waterfall from 'async-waterfall';
-var savingMessage = document.getElementById('saving-message');
 
 const apiServerBaseURL = 'https://smidgeo.com/note-taker/note';
 // const apiServerBaseURL = 'http://localhost:5678/note';
 var lineBreakRegex = /\n/g;
 
-export default function SaveNoteFlow({ imageCanvasOps }) {
+export default function SaveNoteFlow({ rootSel }) {
+  var savingMessage = document.querySelector(`${rootSel} .saving-message`);
+
   return saveNoteFlow;
-  function saveNoteFlow({ note, archive, password, file, sendImageRaw }) {
+
+  function saveNoteFlow({
+    note,
+    archive,
+    password,
+    file,
+    canvasImageOps,
+    sendImageRaw
+  }) {
     savingMessage.textContent = 'Saving…';
     savingMessage.classList.remove('hidden');
 
@@ -49,10 +58,10 @@ export default function SaveNoteFlow({ imageCanvasOps }) {
         appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
       } else if (sendImageRaw) {
         appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
-      } else if (imageCanvasOps.canvasHasImage()) {
+      } else if (canvasImageOps.canvasHasImage()) {
         waterfall(
           [
-            imageCanvasOps.getImageFromCanvas,
+            canvasImageOps.getImageFromCanvas,
             // writeToDebugImage,
             appendAndSend,
             onSaved
@@ -64,7 +73,7 @@ export default function SaveNoteFlow({ imageCanvasOps }) {
           'Unknown file: No image is loaded to canvas, nor is the file a video.';
         renderMessage({
           message: `Could not save note. ${errorMessage}`,
-          messageType: 'saving-message'
+          sel: `${rootSel} .saving-message`
         });
         throw new Error(errorMessage);
       }
@@ -80,13 +89,13 @@ export default function SaveNoteFlow({ imageCanvasOps }) {
       if (res.statusCode < 300 && res.statusCode > 199) {
         renderMessage({
           message: `Saved note: "${note.caption}".`,
-          messageType: 'saving-message'
+          sel: `${rootSel} .saving-message`
         });
         resetFields();
       } else {
         renderMessage({
           message: `Could not save note. ${res.statusCode}: ${body.message}`,
-          messageType: 'saving-message'
+          sel: `${rootSel} .saving-message`
         });
       }
     }
