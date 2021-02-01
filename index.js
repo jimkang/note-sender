@@ -3355,7 +3355,7 @@
     <button class="insert-bq-button">Insert blockquote</button>
   </span>
   <h5>Media controls</h5>
-  <canvas class="resize-canvas" class="hidden"></canvas>
+  <canvas class="resize-canvas hidden"></canvas>
   <div class="image-controls" class="hidden">
     <canvas class="thumbnail-canvas"></canvas>
     <button class="rotate-button">Rotate image</button>
