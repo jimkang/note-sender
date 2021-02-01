@@ -3700,12 +3700,12 @@
 	}
 
 	/* global Tesseract */
-	var noteArea = document.getElementById('note-area');
-	var scanMessage = document.getElementById('scan-message');
-
 	var alphaCharsAroundNewline = /(\w)\n(\w)/g;
 
-	function scanFlow({ file }) {
+	function scanFlow({ rootSel, file }) {
+	  var noteArea = document.querySelector(`${rootSel} .note-area`);
+	  var scanMessage = document.querySelector(`${rootSel} .scan-message`);
+
 	  scanMessage.textContent = 'Scanning…';
 	  scanMessage.classList.remove('hidden');
 	  Tesseract.recognize(file, 'eng').then(insertText, handleScanError);
@@ -3816,7 +3816,7 @@
 
 	  function onScanClick() {
 	    if (scanFlow) {
-	      scanFlow({ file });
+	      scanFlow({ rootSel, file });
 	    }
 	  }
 

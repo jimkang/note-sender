@@ -93,7 +93,7 @@ export function wireControls({ rootSel, file }) {
 
   function onScanClick() {
     if (scanFlow) {
-      scanFlow({ file });
+      scanFlow({ rootSel, file });
     }
   }
 
