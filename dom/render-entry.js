@@ -7,13 +7,13 @@ const entryBase = `<h4>Note</h4>
   </span>
   <h5>Media controls</h5>
   <canvas class="resize-canvas hidden"></canvas>
-  <div class="image-controls" class="hidden">
-    <canvas class="thumbnail-canvas"></canvas>
+  <div class="image-controls hidden">
+    <canvas class="thumbnail-canvas hidden"></canvas>
     <button class="rotate-button">Rotate image</button>
     <h5>Resize to this maximum length for image side</h5>
     (Set it to "unlimited" to not resize at all)
     <input type="text" class="max-image-side-length" value="2016" />
-    <video class="video-preview" controls></video>
+    <video class="video-preview hidden" controls></video>
     <button class="remove-image-button">Remove media </button>
     <button class="scan-button">Scan text into note body</button>
     <input class="send-image-raw-checkbox" type="checkbox" />
