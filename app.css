@@ -1,11 +1,14 @@
 body {
   font-size: 24pt;
   font-family: Ubuntu, roboto, noto, segoe ui, arial, -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, sans-serif;
+  background-color: #ffe264;
+  color: #444;
+}
+
+.ccol {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #ffe264;
-  color: #444;
 }
 
 .hidden {
@@ -21,8 +24,6 @@ body {
 }
 
 .note-form {
-  display: flex;
-  flex-direction: column;
   width: 100%;
   max-width: 20em;
 }
@@ -35,7 +36,7 @@ input {
   border-width: 1px;
 }
 
-input#media-file {
+input.media-file {
   padding-left: 0;
   border-width: 0;
 }
@@ -72,7 +73,6 @@ input#media-file {
   margin-bottom: 0.5em;
 }
 
-
 .note-form textarea {
   font-family: Georgia, serif;
   background-color: white;
@@ -90,7 +90,7 @@ input#media-file {
   margin-left: 0.5em;
 }
 
-#image-controls {
+.image-controls {
   display: flex;
   flex-direction: column;
 }
@@ -132,6 +132,25 @@ canvas {
   padding: 0.2em;
 }
 
+.video-preview {
+  max-width: 100%;
+}
+
+#entries {
+  list-style-type: none;
+  padding: 0;
+}
+
+.entry-container {
+  border: solid hsla(60, 30%, 10%, 0.2) 1px;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.entry-container h4 {
+  margin-top: 0;
+}
+
 @keyframes glow {
   0% { box-shadow: #222 0 0 2px; text-shadow: #b6e438 0 0 2px; }
   33% { box-shadow: #222 0 0 20px; text-shadow: #b6e438 0 0 20px; }
@@ -156,7 +175,7 @@ canvas {
     padding: 0.5em;
   }
 
-  .note-form input {
+  input {
     font-size: 18px;
   }
 

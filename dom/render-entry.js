@@ -1,5 +1,5 @@
 const entryBase = `<h4>Note</h4>
-<section class="note-form">
+<section class="note-form ccol">
   <textarea class="note-area" data-of="caption"></textarea>
   <span>
     <button class="insert-link-button">Insert link</button>
