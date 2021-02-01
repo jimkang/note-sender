@@ -13,14 +13,18 @@ var entriesRootEl = document.getElementById('entries');
 export function wireControlsGlobal() {
   on('#media-file', 'change', onMediaFileChange);
 
+  wireControls({ rootSel: '#base-entry' });
   // If there are files already selected from a
   // previous load of this page, load them into
   // the entries.
   onMediaFileChange.bind(document.getElementById('media-file'))();
 
   function onMediaFileChange() {
-    entriesRootEl.innerHTML = '';
     var files = this.files;
+    if (files.length < 1) {
+      return;
+    }
+    entriesRootEl.innerHTML = '';
     for (var i = 0; i < files.length; ++i) {
       loadFile(files[i], i);
     }
@@ -41,11 +45,11 @@ export function wireControls({ rootSel, file }) {
   var saveNoteFlow = SaveNoteFlow({ rootSel });
   var canvasImageOps = CanvasImageOps({ rootSel });
 
-  var noteArea = document.querySelector(`${rootSel} note-area`);
+  var noteArea = document.querySelector(`${rootSel} .note-area`);
   var maxSideLengthField = document.querySelector(
     `${rootSel} .max-image-side-length`
   );
-  var imageControls = document.querySelector(`${rootSel} image-controls`);
+  var imageControls = document.querySelector(`${rootSel} .image-controls`);
   on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
   on(
     `${rootSel} .insert-link-button`,
@@ -81,7 +85,9 @@ export function wireControls({ rootSel, file }) {
       password,
       file,
       canvasImageOps, // TODO: Just pass image?
-      sendImageRaw: document.querySelector('.send-image-raw-checkbox').checked
+      sendImageRaw: document.querySelector(
+        `${rootSel} .send-image-raw-checkbox`
+      ).checked
     });
   }
 
