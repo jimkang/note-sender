@@ -1,6 +1,6 @@
 {
   "name": "note-sender",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Send notes!",
   "main": "index.js",
   "private": true,
