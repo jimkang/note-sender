@@ -36,7 +36,6 @@ export default function SaveNoteFlow({ rootSel }) {
         'X-Note-Archive': archive
       }
     };
-
     if (file) {
       postFormData(reqOpts);
     } else {

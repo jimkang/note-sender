@@ -8,6 +8,9 @@ pushall: sync
 build:
 	./node_modules/.bin/rollup -c
 
+run:
+	./node_modules/.bin/rollup -cw
+
 prettier:
 	prettier --single-quote --write "**/*.js"
 
