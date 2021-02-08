@@ -132,7 +132,7 @@ canvas {
   padding: 0.2em;
 }
 
-.video-preview {
+.video-preview,.audio-preview {
   max-width: 100%;
 }
 

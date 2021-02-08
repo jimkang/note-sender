@@ -61,6 +61,7 @@ export function wireControls({ rootSel, file }) {
   );
   var imageControls = document.querySelector(`${rootSel} .image-controls`);
   var videoPreviewEl = document.querySelector(`${rootSel} .video-preview`);
+  var audioPreviewEl = document.querySelector(`${rootSel} .audio-preview`);
   var thumbnailEl = document.querySelector(`${rootSel} .thumbnail-canvas`);
 
   on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
@@ -93,6 +94,9 @@ export function wireControls({ rootSel, file }) {
     } else if (file.type.startsWith('video/')) {
       videoPreviewEl.setAttribute('src', URL.createObjectURL(file));
       videoPreviewEl.classList.remove('hidden');
+    } else if (file.type.startsWith('audio/')) {
+      audioPreviewEl.setAttribute('src', URL.createObjectURL(file));
+      audioPreviewEl.classList.remove('hidden');
     }
   }
 

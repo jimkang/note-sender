@@ -55,6 +55,9 @@ export default function SaveNoteFlow({ rootSel }) {
       if (file.type.startsWith('video/')) {
         formData.append('isVideo', true);
         appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
+      } else if (file.type.startsWith('audio/')) {
+        formData.append('isAudio', true);
+        appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
       } else if (sendImageRaw) {
         appendAndSend(file, oknok({ ok: onSaved, nok: handleError }));
       } else if (canvasImageOps.canvasHasImage()) {

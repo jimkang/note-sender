@@ -14,6 +14,7 @@ const entryBase = `<h4>Note</h4>
     (Set it to "unlimited" to not resize at all)
     <input type="text" class="max-image-side-length" value="2016" />
     <video class="video-preview hidden" controls></video>
+    <audio class="audio-preview hidden" controls></audio>
     <button class="remove-image-button">Remove media </button>
     <button class="scan-button">Scan text into note body</button>
     <input class="send-image-raw-checkbox" type="checkbox" />
