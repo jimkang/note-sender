@@ -4,6 +4,7 @@ import CanvasImageOps from './canvas-image-ops';
 import { renderEntry } from './render-entry';
 import SaveNoteFlow from '../flows/save-note-flow';
 import scanFlow from '../flows/scan-flow';
+import getFromFlickrFlow from '../flows/get-from-flickr-flow';
 
 var { on } = OLPE();
 
@@ -17,6 +18,7 @@ export function wireControlsGlobal() {
     () => clearEntries() && renderEntry(entriesRootEl, 'base-entry')
   );
   on('#media-file', 'change', onMediaFileChange);
+  on('#get-from-flickr-button', 'click', getFromFlickrFlow);
 
   wireControls({ rootSel: '#base-entry' });
   // If there are files already selected from a

@@ -32,6 +32,7 @@
     "tesseract.js": "^2.1.2"
   },
   "dependencies": {
+    "@jimkang/randomid": "^1.1.0",
     "async-waterfall": "^0.1.5",
     "await-to-js": "^2.1.1",
     "basic-browser-request": "^9.0.0",
