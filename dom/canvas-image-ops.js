@@ -66,13 +66,11 @@ function CanvasImageOps({ rootSel }) {
     }
   }
 
-  function getImageFromCanvas(done) {
-    canvas.toBlob(passBlob, loadedImageMIMEType, 0.7);
-
-    function passBlob(blob) {
-      done(null, blob);
-    }
-  }
+  function getImageFromCanvas() {
+    return new Promise((resolve) =>
+      canvas.toBlob(resolve, loadedImageMIMEType, 0.7)
+    );
+  } 
 
   function canvasHasImage() {
     return imageIsLoaded;
