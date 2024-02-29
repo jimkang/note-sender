@@ -8,7 +8,7 @@ var entriesEl = document.getElementById('entries');
 
 var routeState = RouteState({
   followRoute,
-  windowObject: window
+  windowObject: window,
 });
 
 (async function go() {

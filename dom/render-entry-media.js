@@ -29,12 +29,10 @@ var { on } = OLPE();
 
 export function renderEntryMedia({ parentSel, file, idLabel }) {
   var { mediaRoot, mediaContainerClass } = appendMediaHTML(parentSel, idLabel);
-  const rootSel = parentSel + ' .' + mediaContainerClass; 
+  const rootSel = parentSel + ' .' + mediaContainerClass;
   var canvasImageOps = CanvasImageOps({ rootSel });
 
-  var maxSideLengthField = mediaRoot.querySelector(
-    '.max-image-side-length'
-  );
+  var maxSideLengthField = mediaRoot.querySelector('.max-image-side-length');
   var imageControls = mediaRoot.querySelector('.image-controls');
   var videoPreviewEl = mediaRoot.querySelector('.video-preview');
   var audioPreviewEl = mediaRoot.querySelector('.audio-preview');
@@ -48,7 +46,7 @@ export function renderEntryMedia({ parentSel, file, idLabel }) {
       canvasImageOps.loadFileToCanvas({
         file,
         mimeType: file.type,
-        maxSideLength
+        maxSideLength,
       });
       thumbnailEl.classList.remove('hidden');
       on(`${rootSel} .scan-button`, 'click', scanFlow);
@@ -78,9 +76,8 @@ export function renderEntryMedia({ parentSel, file, idLabel }) {
     }
     let mediaFile = file;
     if (file.type.startsWith('image/')) {
-      if (document.querySelector(
-        `${rootSel} .send-image-raw-checkbox`
-      ).checked
+      if (
+        document.querySelector(`${rootSel} .send-image-raw-checkbox`).checked
       ) {
         mediaFile = file;
       } else {
@@ -88,7 +85,7 @@ export function renderEntryMedia({ parentSel, file, idLabel }) {
       }
     }
     var altInputEl = document.querySelector(rootSel + ' .alt-text');
-    return { file: mediaFile, filename: file.name, alt:  altInputEl.value };
+    return { file: mediaFile, filename: file.name, alt: altInputEl.value };
   }
 }
 

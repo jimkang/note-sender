@@ -39,19 +39,25 @@ export function renderEntry({ parentEl, id, files }) {
   var noteArea = document.querySelector(`${rootSel} .note-area`);
 
   if (files) {
-    mediaGetters = files.map((file, i) => renderEntryMedia({ parentSel: rootSel + ' .entry-media-list', file, idLabel: i }));
+    mediaGetters = files.map((file, i) =>
+      renderEntryMedia({
+        parentSel: rootSel + ' .entry-media-list',
+        file,
+        idLabel: i,
+      }),
+    );
   }
 
   on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
   on(
     `${rootSel} .insert-link-button`,
     'click',
-    insertIntoTextarea('<a href="URL"></a>')
+    insertIntoTextarea('<a href="URL"></a>'),
   );
   on(
     `${rootSel} .insert-bq-button`,
     'click',
-    insertIntoTextarea('<blockquote></blockquote>')
+    insertIntoTextarea('<blockquote></blockquote>'),
   );
   on(`${rootSel} .entry-media-file`, 'change', onMediaFileChange);
 
@@ -75,7 +81,7 @@ export function renderEntry({ parentEl, id, files }) {
       archive,
       password,
       mediaObjects,
-      rootSel
+      rootSel,
     });
   }
 
@@ -89,8 +95,9 @@ export function renderEntry({ parentEl, id, files }) {
     files = this.files;
     mediaGetters = [];
     for (let i = 0; i < files.length; ++i) {
-      mediaGetters.push(renderEntryMedia({ parentSel: rootSel, file: files[i], idLabel: i }));
+      mediaGetters.push(
+        renderEntryMedia({ parentSel: rootSel, file: files[i], idLabel: i }),
+      );
     }
   }
 }
-

@@ -1,9 +1,9 @@
 // Polyfill for canvas.toBlob from MDN.
 if (!HTMLCanvasElement.prototype.toBlob) {
   Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
-    value: function(callback, type, quality) {
+    value: function (callback, type, quality) {
       var canvas = this;
-      setTimeout(function() {
+      setTimeout(function () {
         var binStr = atob(canvas.toDataURL(type, quality).split(',')[1]),
           len = binStr.length,
           arr = new Uint8Array(len);
@@ -14,7 +14,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 
         callback(new Blob([arr], { type: type || 'image/png' }));
       });
-    }
+    },
   });
 }
 
@@ -34,7 +34,7 @@ function CanvasImageOps({ rootSel }) {
     getImageFromCanvas,
     canvasHasImage,
     rotateImage,
-    clearCanvases
+    clearCanvases,
   };
 
   function loadFileToCanvas({ mimeType, maxSideLength, file }) {
@@ -68,9 +68,9 @@ function CanvasImageOps({ rootSel }) {
 
   function getImageFromCanvas() {
     return new Promise((resolve) =>
-      canvas.toBlob(resolve, loadedImageMIMEType, 0.7)
+      canvas.toBlob(resolve, loadedImageMIMEType, 0.7),
     );
-  } 
+  }
 
   function canvasHasImage() {
     return imageIsLoaded;
@@ -117,7 +117,7 @@ function CanvasImageOps({ rootSel }) {
       0,
       0,
       300,
-      200
+      200,
     );
   }
 

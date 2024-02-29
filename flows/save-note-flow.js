@@ -13,7 +13,7 @@ export function saveNoteFlow({
   archive,
   password,
   mediaObjects,
-  rootSel
+  rootSel,
 }) {
   var savingMessage = document.querySelector(`${rootSel} .saving-message`);
   savingMessage.textContent = 'Saving…';
@@ -27,8 +27,8 @@ export function saveNoteFlow({
     json: true,
     headers: {
       Authorization: `Key ${password}`,
-      'X-Note-Archive': archive
-    }
+      'X-Note-Archive': archive,
+    },
   };
 
   if (mediaObjects && mediaObjects.length > 0) {
@@ -45,13 +45,13 @@ export function saveNoteFlow({
     if (res.statusCode < 300 && res.statusCode > 199) {
       renderMessage({
         message: `Saved note: "${note.caption}".`,
-        sel: `${rootSel} .saving-message`
+        sel: `${rootSel} .saving-message`,
       });
       resetFields();
     } else {
       renderMessage({
         message: `Could not save note. ${res.statusCode}: ${body.message}`,
-        sel: `${rootSel} .saving-message`
+        sel: `${rootSel} .saving-message`,
       });
     }
   }
@@ -64,8 +64,13 @@ function getFormData({ mediaObjects, note }) {
   }
 
   if (mediaObjects) {
-    mediaObjects.forEach((mediaObject, i) => formData.append('buffer' + i, mediaObject.file));
-    formData.append('mediaFiles', JSON.stringify(mediaObjects.map(getMediaFileMetadata)));
+    mediaObjects.forEach((mediaObject, i) =>
+      formData.append('buffer' + i, mediaObject.file),
+    );
+    formData.append(
+      'mediaFiles',
+      JSON.stringify(mediaObjects.map(getMediaFileMetadata)),
+    );
   }
   return formData;
 }

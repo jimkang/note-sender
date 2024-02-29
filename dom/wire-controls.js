@@ -9,7 +9,9 @@ export function wireControlsGlobal() {
   on(
     '#clear-entries-button',
     'click',
-    () => clearEntries() && renderEntry({ parentEl: entriesRootEl, id: 'base-entry', files: [] })
+    () =>
+      clearEntries() &&
+      renderEntry({ parentEl: entriesRootEl, id: 'base-entry', files: [] }),
   );
   on('#media-file', 'change', onMediaFileChange);
 

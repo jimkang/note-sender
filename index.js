@@ -3280,7 +3280,7 @@
 	  archive,
 	  password,
 	  mediaObjects,
-	  rootSel
+	  rootSel,
 	}) {
 	  var savingMessage = document.querySelector(`${rootSel} .saving-message`);
 	  savingMessage.textContent = 'Saving…';
@@ -3294,8 +3294,8 @@
 	    json: true,
 	    headers: {
 	      Authorization: `Key ${password}`,
-	      'X-Note-Archive': archive
-	    }
+	      'X-Note-Archive': archive,
+	    },
 	  };
 
 	  if (mediaObjects && mediaObjects.length > 0) {
@@ -3312,13 +3312,13 @@
 	    if (res.statusCode < 300 && res.statusCode > 199) {
 	      renderMessage({
 	        message: `Saved note: "${note.caption}".`,
-	        sel: `${rootSel} .saving-message`
+	        sel: `${rootSel} .saving-message`,
 	      });
 	      resetFields();
 	    } else {
 	      renderMessage({
 	        message: `Could not save note. ${res.statusCode}: ${body.message}`,
-	        sel: `${rootSel} .saving-message`
+	        sel: `${rootSel} .saving-message`,
 	      });
 	    }
 	  }
@@ -3331,8 +3331,13 @@
 	  }
 
 	  if (mediaObjects) {
-	    mediaObjects.forEach((mediaObject, i) => formData.append('buffer' + i, mediaObject.file));
-	    formData.append('mediaFiles', JSON.stringify(mediaObjects.map(getMediaFileMetadata)));
+	    mediaObjects.forEach((mediaObject, i) =>
+	      formData.append('buffer' + i, mediaObject.file),
+	    );
+	    formData.append(
+	      'mediaFiles',
+	      JSON.stringify(mediaObjects.map(getMediaFileMetadata)),
+	    );
 	  }
 	  return formData;
 	}
@@ -3442,9 +3447,9 @@
 	// Polyfill for canvas.toBlob from MDN.
 	if (!HTMLCanvasElement.prototype.toBlob) {
 	  Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
-	    value: function(callback, type, quality) {
+	    value: function (callback, type, quality) {
 	      var canvas = this;
-	      setTimeout(function() {
+	      setTimeout(function () {
 	        var binStr = atob(canvas.toDataURL(type, quality).split(',')[1]),
 	          len = binStr.length,
 	          arr = new Uint8Array(len);
@@ -3455,7 +3460,7 @@
 
 	        callback(new Blob([arr], { type: type || 'image/png' }));
 	      });
-	    }
+	    },
 	  });
 	}
 
@@ -3475,7 +3480,7 @@
 	    getImageFromCanvas,
 	    canvasHasImage,
 	    rotateImage,
-	    clearCanvases
+	    clearCanvases,
 	  };
 
 	  function loadFileToCanvas({ mimeType, maxSideLength, file }) {
@@ -3509,9 +3514,9 @@
 
 	  function getImageFromCanvas() {
 	    return new Promise((resolve) =>
-	      canvas.toBlob(resolve, loadedImageMIMEType, 0.7)
+	      canvas.toBlob(resolve, loadedImageMIMEType, 0.7),
 	    );
-	  } 
+	  }
 
 	  function canvasHasImage() {
 	    return imageIsLoaded;
@@ -3558,7 +3563,7 @@
 	      0,
 	      0,
 	      300,
-	      200
+	      200,
 	    );
 	  }
 
@@ -3624,12 +3629,10 @@
 
 	function renderEntryMedia({ parentSel, file, idLabel }) {
 	  var { mediaRoot, mediaContainerClass } = appendMediaHTML(parentSel, idLabel);
-	  const rootSel = parentSel + ' .' + mediaContainerClass; 
+	  const rootSel = parentSel + ' .' + mediaContainerClass;
 	  var canvasImageOps = CanvasImageOps({ rootSel });
 
-	  var maxSideLengthField = mediaRoot.querySelector(
-	    '.max-image-side-length'
-	  );
+	  var maxSideLengthField = mediaRoot.querySelector('.max-image-side-length');
 	  var imageControls = mediaRoot.querySelector('.image-controls');
 	  var videoPreviewEl = mediaRoot.querySelector('.video-preview');
 	  var audioPreviewEl = mediaRoot.querySelector('.audio-preview');
@@ -3643,7 +3646,7 @@
 	      canvasImageOps.loadFileToCanvas({
 	        file,
 	        mimeType: file.type,
-	        maxSideLength
+	        maxSideLength,
 	      });
 	      thumbnailEl.classList.remove('hidden');
 	      on(`${rootSel} .scan-button`, 'click', scanFlow);
@@ -3673,9 +3676,8 @@
 	    }
 	    let mediaFile = file;
 	    if (file.type.startsWith('image/')) {
-	      if (document.querySelector(
-	        `${rootSel} .send-image-raw-checkbox`
-	      ).checked
+	      if (
+	        document.querySelector(`${rootSel} .send-image-raw-checkbox`).checked
 	      ) {
 	        mediaFile = file;
 	      } else {
@@ -3683,7 +3685,7 @@
 	      }
 	    }
 	    var altInputEl = document.querySelector(rootSel + ' .alt-text');
-	    return { file: mediaFile, filename: file.name, alt:  altInputEl.value };
+	    return { file: mediaFile, filename: file.name, alt: altInputEl.value };
 	  }
 	}
 
@@ -3734,19 +3736,25 @@
 	  var noteArea = document.querySelector(`${rootSel} .note-area`);
 
 	  if (files) {
-	    mediaGetters = files.map((file, i) => renderEntryMedia({ parentSel: rootSel + ' .entry-media-list', file, idLabel: i }));
+	    mediaGetters = files.map((file, i) =>
+	      renderEntryMedia({
+	        parentSel: rootSel + ' .entry-media-list',
+	        file,
+	        idLabel: i,
+	      }),
+	    );
 	  }
 
 	  on$1(`${rootSel} .submit-note-button`, 'click', onSaveNote);
 	  on$1(
 	    `${rootSel} .insert-link-button`,
 	    'click',
-	    insertIntoTextarea('<a href="URL"></a>')
+	    insertIntoTextarea('<a href="URL"></a>'),
 	  );
 	  on$1(
 	    `${rootSel} .insert-bq-button`,
 	    'click',
-	    insertIntoTextarea('<blockquote></blockquote>')
+	    insertIntoTextarea('<blockquote></blockquote>'),
 	  );
 	  on$1(`${rootSel} .entry-media-file`, 'change', onMediaFileChange);
 
@@ -3770,7 +3778,7 @@
 	      archive,
 	      password,
 	      mediaObjects,
-	      rootSel
+	      rootSel,
 	    });
 	  }
 
@@ -3784,7 +3792,9 @@
 	    files = this.files;
 	    mediaGetters = [];
 	    for (let i = 0; i < files.length; ++i) {
-	      mediaGetters.push(renderEntryMedia({ parentSel: rootSel, file: files[i], idLabel: i }));
+	      mediaGetters.push(
+	        renderEntryMedia({ parentSel: rootSel, file: files[i], idLabel: i }),
+	      );
 	    }
 	  }
 	}
@@ -3797,7 +3807,9 @@
 	  on$2(
 	    '#clear-entries-button',
 	    'click',
-	    () => clearEntries() && renderEntry({ parentEl: entriesRootEl, id: 'base-entry', files: [] })
+	    () =>
+	      clearEntries() &&
+	      renderEntry({ parentEl: entriesRootEl, id: 'base-entry', files: [] }),
 	  );
 	  on$2('#media-file', 'change', onMediaFileChange);
 
@@ -3835,7 +3847,7 @@
 
 	var routeState$1 = routeState({
 	  followRoute,
-	  windowObject: window
+	  windowObject: window,
 	});
 
 	(async function go() {
