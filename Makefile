@@ -9,7 +9,7 @@ build:
 	./node_modules/.bin/rollup -c
 
 run:
-	./node_modules/.bin/rollup -cw
+	./node_modules/.bin/rollup -c -w
 
 prettier:
 	prettier --single-quote --write "**/*.js"

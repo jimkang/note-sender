@@ -4,6 +4,8 @@ import { wireControlsGlobal } from './dom/wire-controls';
 import { version } from './package.json';
 import { renderEntry } from './dom/render-entry';
 
+var entriesEl = document.getElementById('entries');
+
 var routeState = RouteState({
   followRoute,
   windowObject: window
@@ -20,10 +22,8 @@ function reportTopLevelError(msg, url, lineNo, columnNo, error) {
 }
 
 function followRoute() {
-  renderEntry(document.getElementById('entries'), 'base-entry');
-  wireControlsGlobal({
-    rootSel: '#base-entry'
-  });
+  renderEntry({ parentEl: entriesEl, id: 'base-entry', files: [] });
+  wireControlsGlobal({ rootSel: '#base-entry' });
 }
 
 function renderVersion() {
