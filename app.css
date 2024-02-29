@@ -133,7 +133,7 @@ canvas {
 }
 
 .video-preview,.audio-preview {
-  max-width: 100%;
+  max-width: 90vw;
 }
 
 #entries {
