@@ -71,10 +71,12 @@ function getFormData({ mediaObjects, note }) {
 }
 
 function getMediaFileMetadata(mediaObject) {
+  const mimeType = mediaObject.file.type;
   return {
     filename: mediaObject.filename,
     alt: mediaObject.alt,
-    isVideo: mediaObject.file.type.startsWith('video/'),
-    isAudio: mediaObject.file.type.startsWith('audio/') 
+    mimeType,
+    isVideo: mimeType.startsWith('video/'),
+    isAudio: mimeType.startsWith('audio/'),
   };
 }

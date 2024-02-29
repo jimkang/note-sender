@@ -3338,11 +3338,13 @@
 	}
 
 	function getMediaFileMetadata(mediaObject) {
+	  const mimeType = mediaObject.file.type;
 	  return {
 	    filename: mediaObject.filename,
 	    alt: mediaObject.alt,
-	    isVideo: mediaObject.file.type.startsWith('video/'),
-	    isAudio: mediaObject.file.type.startsWith('audio/') 
+	    mimeType,
+	    isVideo: mimeType.startsWith('video/'),
+	    isAudio: mimeType.startsWith('audio/'),
 	  };
 	}
 
@@ -3605,23 +3607,25 @@
     <h5>Resize to this maximum length for image side</h5>
     (Set it to "unlimited" to not resize at all)
     <input type="text" class="max-image-side-length" value="2016" />
-    <video class="video-preview hidden" controls></video>
-    <audio class="audio-preview hidden" controls></audio>
     <button class="remove-image-button">Remove media </button>
     <button class="scan-button">Scan text into note body</button>
+    <h3>Alt text</h3>
     <input class="alt-text" type="text" />
     <input class="send-image-raw-checkbox" type="checkbox" />
     <label for="send-image-raw-checkbox"
       >Send the image raw without resizing</label
     >
+  </div>
+  <video class="video-preview hidden" controls></video>
+  <audio class="audio-preview hidden" controls></audio>
 `;
 
 	var { on } = oneListenerPerElement();
 
-	function renderEntryMedia({ rootSel, file, idLabel }) {
-	  var mediaRoot = appendMediaHTML(rootSel, idLabel);
-
-	  var canvasImageOps = CanvasImageOps({ rootSel: '#' + mediaRoot.getAttribute('id') });
+	function renderEntryMedia({ parentSel, file, idLabel }) {
+	  var { mediaRoot, mediaContainerClass } = appendMediaHTML(parentSel, idLabel);
+	  const rootSel = parentSel + ' .' + mediaContainerClass; 
+	  var canvasImageOps = CanvasImageOps({ rootSel });
 
 	  var maxSideLengthField = mediaRoot.querySelector(
 	    '.max-image-side-length'
@@ -3633,15 +3637,18 @@
 
 	  var maxSideLength = +maxSideLengthField.value;
 	  if (file) {
-	    imageControls.classList.remove('hidden');
-
 	    if (file.type.startsWith('image/') && !isNaN(maxSideLength)) {
+	      imageControls.classList.remove('hidden');
+
 	      canvasImageOps.loadFileToCanvas({
 	        file,
 	        mimeType: file.type,
 	        maxSideLength
 	      });
 	      thumbnailEl.classList.remove('hidden');
+	      on(`${rootSel} .scan-button`, 'click', scanFlow);
+	      on(`${rootSel} .rotate-button`, 'click', canvasImageOps.rotateImage);
+	      on(`${rootSel} .remove-image-button`, 'click', onRemoveImage);
 	    } else if (file.type.startsWith('video/')) {
 	      videoPreviewEl.setAttribute('src', URL.createObjectURL(file));
 	      videoPreviewEl.setAttribute('type', file.type);
@@ -3652,23 +3659,20 @@
 	    }
 	  }
 
-	  on(`${rootSel} .scan-button`, 'click', scanFlow);
-	  on(`${rootSel} .rotate-button`, 'click', canvasImageOps.rotate);
-	  on(`${rootSel} .remove-image-button`, 'click', onRemoveImage);
-
 	  return getMediaObject;
 
 	  function onRemoveImage() {
-	    // TODO: Remove file, too.
 	    canvasImageOps.clearCanvases();
 	    imageControls.classList.add('hidden');
+	    file = null;
 	  }
 
 	  async function getMediaObject() {
+	    if (!file) {
+	      return;
+	    }
 	    let mediaFile = file;
 	    if (file.type.startsWith('image/')) {
-
-	  
 	      if (document.querySelector(
 	        `${rootSel} .send-image-raw-checkbox`
 	      ).checked
@@ -3686,11 +3690,12 @@
 	function appendMediaHTML(rootSel, idLabel) {
 	  var parentEl = document.querySelector(rootSel);
 	  var div = document.createElement('div');
-	  div.setAttribute('id', 'entry-media-' + idLabel);
-	  div.setAttribute('class', 'entry-media-controls');
+	  const mediaContainerClass = 'entry-media-' + idLabel;
+	  div.classList.add('entry-media-controls');
+	  div.classList.add(mediaContainerClass);
 	  parentEl.append(div);
 	  div.innerHTML = entryMediaControlsBase;
-	  return div;
+	  return { mediaRoot: div, mediaContainerClass };
 	}
 
 	var objectFromDOM = objectForm.ObjectFromDOM({});
@@ -3729,7 +3734,7 @@
 	  var noteArea = document.querySelector(`${rootSel} .note-area`);
 
 	  if (files) {
-	    mediaGetters = files.map((file, i) => renderEntryMedia({ rootSel: '.entry-media-list', file, idLabel: i }));
+	    mediaGetters = files.map((file, i) => renderEntryMedia({ parentSel: rootSel + ' .entry-media-list', file, idLabel: i }));
 	  }
 
 	  on$1(`${rootSel} .submit-note-button`, 'click', onSaveNote);
@@ -3753,7 +3758,10 @@
 	    var mediaObjects = [];
 	    if (mediaGetters) {
 	      for (let getMediaObject of mediaGetters) {
-	        mediaObjects.push(await getMediaObject());
+	        let mediaObject = await getMediaObject();
+	        if (mediaObject) {
+	          mediaObjects.push(mediaObject);
+	        }
 	      }
 	    }
 
@@ -3776,7 +3784,7 @@
 	    files = this.files;
 	    mediaGetters = [];
 	    for (let i = 0; i < files.length; ++i) {
-	      mediaGetters.push(renderEntryMedia({ rootSel, file: files[i], idLabel: i }));
+	      mediaGetters.push(renderEntryMedia({ parentSel: rootSel, file: files[i], idLabel: i }));
 	    }
 	  }
 	}
