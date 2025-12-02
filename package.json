@@ -24,13 +24,12 @@
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "eslint": "^7.9.0",
-    "prettier": "^3.2.5",
-    "rollup": "^1.20.0",
-    "rollup-plugin-livereload": "^1.0.0",
+    "eslint": "^7.24.0",
+    "prettier": "^2.8.3",
+    "rollup": "^2.50.6",
+    "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-terser": "^7.0.2",
-    "sirv-cli": "^0.4.6",
-    "tesseract.js": "^2.1.2"
+    "sirv-cli": "^1.0.12"
   },
   "dependencies": {
     "async-waterfall": "^0.1.5",
