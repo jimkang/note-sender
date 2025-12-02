@@ -13,6 +13,9 @@ const entryBase = `<h4>Note</h4>
   <span>
     <button class="insert-link-button">Insert link</button>
     <button class="insert-bq-button">Insert blockquote</button>
+    <button class="insert-underline-button">Insert underline</button>
+    <button class="insert-bold-button">Insert bold</button>
+    <button class="insert-italics-button">Insert italics</button>
   </span>
   <h5>Media for this entry</h5>
   <input type="file" class="entry-media-file" accept="image/*, video/*, audio/*, .m4a,.ogg,.mp3,.wav" multiple />
@@ -39,25 +42,40 @@ export function renderEntry({ parentEl, id, files }) {
   var noteArea = document.querySelector(`${rootSel} .note-area`);
 
   if (files) {
-    mediaGetters = files.map((file, i) =>
+    mediaGetters = files.map((file, i) => {
       renderEntryMedia({
         parentSel: rootSel + ' .entry-media-list',
         file,
         idLabel: i,
-      }),
-    );
+      });
+    });
   }
 
   on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
   on(
     `${rootSel} .insert-link-button`,
     'click',
-    insertIntoTextarea('<a href="URL"></a>'),
+    insertIntoTextarea('<a href="URL">Link</a>')
   );
   on(
     `${rootSel} .insert-bq-button`,
     'click',
-    insertIntoTextarea('<blockquote></blockquote>'),
+    insertIntoTextarea('<blockquote>Quote</blockquote>')
+  );
+  on(
+    `${rootSel} .insert-underline-button`,
+    'click',
+    insertIntoTextarea('<u>Underlined</u>')
+  );
+  on(
+    `${rootSel} .insert-bold-button`,
+    'click',
+    insertIntoTextarea('<b>Bolded</b>')
+  );
+  on(
+    `${rootSel} .insert-italics-button`,
+    'click',
+    insertIntoTextarea('<i>Italicized</i>')
   );
   on(`${rootSel} .entry-media-file`, 'change', onMediaFileChange);
 
@@ -96,7 +114,7 @@ export function renderEntry({ parentEl, id, files }) {
     mediaGetters = [];
     for (let i = 0; i < files.length; ++i) {
       mediaGetters.push(
-        renderEntryMedia({ parentSel: rootSel, file: files[i], idLabel: i }),
+        renderEntryMedia({ parentSel: rootSel, file: files[i], idLabel: i })
       );
     }
   }
