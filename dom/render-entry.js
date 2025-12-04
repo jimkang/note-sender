@@ -42,13 +42,13 @@ export function renderEntry({ parentEl, id, files }) {
   var noteArea = document.querySelector(`${rootSel} .note-area`);
 
   if (files) {
-    mediaGetters = files.map((file, i) => {
+    mediaGetters = files.map((file, i) =>
       renderEntryMedia({
         parentSel: rootSel + ' .entry-media-list',
         file,
         idLabel: i,
-      });
-    });
+      })
+    );
   }
 
   on(`${rootSel} .submit-note-button`, 'click', onSaveNote);
